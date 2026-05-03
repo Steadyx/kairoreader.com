@@ -1,0 +1,25 @@
+services:
+  web:
+    container_name: kairoreader-web
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: kairoreader.com:production
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?Set SITE_DOMAIN in .env or CI secrets}
+      ACME_EMAIL: ${ACME_EMAIL:?Set ACME_EMAIL in .env or CI secrets}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+    name: kairoreader_caddy_data
+  caddy_config:
+    name: kairoreader_caddy_config

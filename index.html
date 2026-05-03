@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kairo RSVP Reader | Calm Android Speed Reading App</title>
+    <meta
+      name="description"
+      content="Kairo is an RSVP-first Android ebook reader for calm speed reading, focus reading, EPUB and MOBI imports, ORP highlighting, adaptive pacing, bookmarks, and low-distraction reading."
+    />
+    <meta
+      name="keywords"
+      content="RSVP reading, speed reading app, calm reader, focus reading, Android ebook reader, ORP highlighting, EPUB reader, MOBI reader"
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#10120f" />
+    <script>
+      (() => {
+        let theme = "dark";
+
+        try {
+          const storedTheme = localStorage.getItem("kairo-theme");
+          const prefersDark = matchMedia("(prefers-color-scheme: dark)").matches;
+          theme = storedTheme === "light" || storedTheme === "dark" ? storedTheme : prefersDark ? "dark" : "light";
+        } catch {
+          theme = "dark";
+        }
+
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+
+        if (themeColor) {
+          themeColor.content = theme === "dark" ? "#10120f" : "#f7f3eb";
+        }
+      })();
+    </script>
+    <link rel="canonical" href="https://kairoreader.com/" />
+    <link rel="icon" href="/assets/kairo-icon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/kairo-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Kairo RSVP Reader" />
+    <meta property="og:title" content="Kairo RSVP Reader | Calm Android Speed Reading App" />
+    <meta
+      property="og:description"
+      content="An RSVP-first Android ebook reader built for speed without chaos, focus without clutter, and deliberate reading momentum."
+    />
+    <meta property="og:url" content="https://kairoreader.com/" />
+    <meta property="og:image" content="https://kairoreader.com/assets/kairo-logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://kairoreader.com/#website",
+            "url": "https://kairoreader.com/",
+            "name": "Kairo RSVP Reader",
+            "description": "Kairo is an RSVP-first Android ebook reader for calm speed reading, focus reading, EPUB and MOBI imports, ORP highlighting, and adaptive pacing.",
+            "inLanguage": "en"
+          },
+          {
+            "@type": ["MobileApplication", "SoftwareApplication"],
+            "@id": "https://kairoreader.com/#app",
+            "name": "Kairo",
+            "url": "https://kairoreader.com/",
+            "image": "https://kairoreader.com/assets/kairo-logo.png",
+            "operatingSystem": "Android 7.0 and newer",
+            "applicationCategory": "EducationalApplication",
+            "description": "An RSVP-first Android ebook reader for DRM-free EPUB and MOBI books, calm speed reading, ORP highlighting, adaptive pacing, focus mode, bookmarks, and persistent reading progress.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "RSVP speed reading",
+              "ORP highlighting",
+              "EPUB and MOBI import",
+              "Adaptive pacing",
+              "Bookmarks and reading progress",
+              "Focus mode",
+              "Language-aware tokenization"
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

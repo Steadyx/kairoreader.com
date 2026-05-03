@@ -1,0 +1,8 @@
+node_modules
+dist
+.prerender
+.npm-cache
+.git
+.DS_Store
+npm-debug.log
+*.local

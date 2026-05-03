@@ -1,0 +1,110 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+      VPS_APP_DIR: ${{ secrets.VPS_APP_DIR }}
+      SITE_DOMAIN: ${{ secrets.SITE_DOMAIN }}
+      ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check and build
+        run: npm run deploy:check
+
+      - name: Validate deployment secrets
+        shell: bash
+        run: |
+          missing=0
+          for name in VPS_HOST VPS_PORT VPS_USER VPS_SSH_KEY VPS_APP_DIR SITE_DOMAIN ACME_EMAIL; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name is not set"
+              missing=1
+            fi
+          done
+
+          case "$VPS_APP_DIR" in
+            ""|"/"|"/root"|"/home"|"/opt"|"/usr"|"/var")
+              echo "::error::VPS_APP_DIR must be a dedicated app directory, for example /opt/kairoreader.com"
+              missing=1
+              ;;
+          esac
+
+          exit "$missing"
+
+      - name: Prepare SSH
+        shell: bash
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/kairoreader_deploy
+          chmod 600 ~/.ssh/kairoreader_deploy
+          ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Package source
+        shell: bash
+        run: |
+          tar \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            --exclude='.prerender' \
+            --exclude='.kairo' \
+            --exclude='.npm-cache' \
+            --exclude='.env' \
+            --exclude='*.local' \
+            -czf /tmp/kairoreader-release.tgz .
+
+      - name: Upload source to VPS
+        shell: bash
+        run: |
+          remote="${VPS_USER}@${VPS_HOST}"
+          ssh_opts=(-i ~/.ssh/kairoreader_deploy -p "$VPS_PORT")
+
+          ssh "${ssh_opts[@]}" "$remote" "mkdir -p '$VPS_APP_DIR'"
+          scp "${ssh_opts[@]}" /tmp/kairoreader-release.tgz "$remote:$VPS_APP_DIR/kairoreader-release.tgz"
+
+      - name: Deploy on VPS
+        shell: bash
+        run: |
+          remote="${VPS_USER}@${VPS_HOST}"
+          ssh_opts=(-i ~/.ssh/kairoreader_deploy -p "$VPS_PORT")
+          site_domain="$(printf '%s' "$SITE_DOMAIN" | tr -d '[:space:]')"
+
+          ssh "${ssh_opts[@]}" "$remote" \
+            "set -eu
+             cd '$VPS_APP_DIR'
+             find . -mindepth 1 -maxdepth 1 ! -name kairoreader-release.tgz -exec rm -rf {} +
+             tar -xzf kairoreader-release.tgz -C .
+             rm kairoreader-release.tgz
+             printf 'SITE_DOMAIN=%s\nACME_EMAIL=%s\n' '$site_domain' '$ACME_EMAIL' > .env
+             chmod +x .cicd/deploy.sh .cicd/bootstrap-vps.sh
+             SITE_DOMAIN='$site_domain' ACME_EMAIL='$ACME_EMAIL' APP_DIR='$VPS_APP_DIR' ./.cicd/deploy.sh"

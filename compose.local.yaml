@@ -1,0 +1,12 @@
+services:
+  web:
+    container_name: kairoreader-web
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: kairoreader.com:local
+    environment:
+      SITE_DOMAIN: :8080
+      ACME_EMAIL: local@example.invalid
+    ports:
+      - "8082:8080"

@@ -1,0 +1,16 @@
+{
+  "name": "Kairo RSVP Reader",
+  "short_name": "Kairo",
+  "description": "An RSVP-first Android ebook reader for calm speed reading and focus reading.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#10120f",
+  "theme_color": "#10120f",
+  "icons": [
+    {
+      "src": "/assets/kairo-icon.png",
+      "sizes": "700x700",
+      "type": "image/png"
+    }
+  ]
+}
