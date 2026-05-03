@@ -108,4 +108,16 @@ jobs:
              rm kairoreader-release.tgz
              printf 'SITE_DOMAIN=%s\nACME_EMAIL=%s\n' '$site_domain' '$ACME_EMAIL' > .env
              chmod +x .cicd/deploy.sh .cicd/bootstrap-vps.sh
+             if ! nerdctl version >/dev/null 2>&1; then
+               if command -v sudo >/dev/null 2>&1 && sudo -n nerdctl version >/dev/null 2>&1; then
+                 :
+               elif [ \"\$(id -u)\" -eq 0 ]; then
+                 sh .cicd/bootstrap-vps.sh
+               elif command -v sudo >/dev/null 2>&1 && sudo -n true >/dev/null 2>&1; then
+                 sudo sh .cicd/bootstrap-vps.sh
+               else
+                 echo 'nerdctl is missing. Run sudo sh .cicd/bootstrap-vps.sh once on the VPS, or give the deploy user passwordless sudo.' >&2
+                 exit 1
+               fi
+             fi
              SITE_DOMAIN='$site_domain' ACME_EMAIL='$ACME_EMAIL' APP_DIR='$VPS_APP_DIR' ./.cicd/deploy.sh"

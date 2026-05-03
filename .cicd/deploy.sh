@@ -5,6 +5,8 @@ APP_DIR="${APP_DIR:-$(pwd)}"
 COMPOSE_FILE="${COMPOSE_FILE:-compose.yaml}"
 HEALTH_TIMEOUT_SECONDS="${HEALTH_TIMEOUT_SECONDS:-150}"
 
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH:-}"
+
 cd "$APP_DIR"
 
 fail() {
