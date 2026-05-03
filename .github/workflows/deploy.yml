@@ -88,9 +88,10 @@ jobs:
         run: |
           remote="${VPS_USER}@${VPS_HOST}"
           ssh_opts=(-i ~/.ssh/kairoreader_deploy -p "$VPS_PORT")
+          scp_opts=(-i ~/.ssh/kairoreader_deploy -P "$VPS_PORT")
 
           ssh "${ssh_opts[@]}" "$remote" "mkdir -p '$VPS_APP_DIR'"
-          scp "${ssh_opts[@]}" /tmp/kairoreader-release.tgz "$remote:$VPS_APP_DIR/kairoreader-release.tgz"
+          scp "${scp_opts[@]}" /tmp/kairoreader-release.tgz "$remote:$VPS_APP_DIR/kairoreader-release.tgz"
 
       - name: Deploy on VPS
         shell: bash
