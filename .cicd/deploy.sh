@@ -57,16 +57,26 @@ resolve_nerdctl() {
 
 nerdctl_ready() {
   NERDCTL_BIN="$(resolve_nerdctl)" || return 1
+  NERDCTL_SUDO_ERROR=""
+  NERDCTL_PLAIN_ERROR=""
 
   if command -v sudo >/dev/null 2>&1 && sudo -n "$NERDCTL_BIN" info >/dev/null 2>&1; then
     USE_SUDO_NERDCTL=1
     return 0
   fi
 
+  if command -v sudo >/dev/null 2>&1; then
+    NERDCTL_SUDO_ERROR="$(sudo -n "$NERDCTL_BIN" info 2>&1 || true)"
+  else
+    NERDCTL_SUDO_ERROR="sudo is not installed"
+  fi
+
   if "$NERDCTL_BIN" info >/dev/null 2>&1; then
     USE_SUDO_NERDCTL=0
     return 0
   fi
+
+  NERDCTL_PLAIN_ERROR="$("$NERDCTL_BIN" info 2>&1 || true)"
 
   return 1
 }
@@ -95,6 +105,9 @@ first_domain="$(first_domain_from "$normalized_domains")"
 [ -n "$first_domain" ] || fail "SITE_DOMAIN did not contain a usable hostname."
 
 if ! nerdctl_ready; then
+  printf 'nerdctl binary: %s\n' "${NERDCTL_BIN:-not found}" >&2
+  printf 'sudo nerdctl info failed:\n%s\n' "${NERDCTL_SUDO_ERROR:-no output}" >&2
+  printf 'plain nerdctl info failed:\n%s\n' "${NERDCTL_PLAIN_ERROR:-no output}" >&2
   fail "nerdctl cannot talk to containerd. Run .cicd/bootstrap-vps.sh, SSH as root, or grant this deploy user passwordless sudo for nerdctl."
 fi
 
