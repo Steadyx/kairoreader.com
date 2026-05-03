@@ -44,13 +44,13 @@ first_domain_from() {
 }
 
 nerdctl_ready() {
-  if nerdctl version >/dev/null 2>&1; then
-    USE_SUDO_NERDCTL=0
+  if command -v sudo >/dev/null 2>&1 && sudo -n nerdctl info >/dev/null 2>&1; then
+    USE_SUDO_NERDCTL=1
     return 0
   fi
 
-  if command -v sudo >/dev/null 2>&1 && sudo -n nerdctl version >/dev/null 2>&1; then
-    USE_SUDO_NERDCTL=1
+  if command -v nerdctl >/dev/null 2>&1 && nerdctl info >/dev/null 2>&1; then
+    USE_SUDO_NERDCTL=0
     return 0
   fi
 
@@ -66,7 +66,6 @@ nerdctl_run() {
 }
 
 need curl
-need nerdctl
 
 [ -f "$COMPOSE_FILE" ] || fail "missing $COMPOSE_FILE"
 
