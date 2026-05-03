@@ -43,13 +43,27 @@ first_domain_from() {
   normalize_domains "$1" | cut -d, -f1
 }
 
+resolve_nerdctl() {
+  for candidate in "${NERDCTL_BIN:-}" /usr/local/bin/nerdctl /usr/bin/nerdctl nerdctl; do
+    [ -n "$candidate" ] || continue
+    if command -v "$candidate" >/dev/null 2>&1; then
+      command -v "$candidate"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 nerdctl_ready() {
-  if command -v sudo >/dev/null 2>&1 && sudo -n nerdctl info >/dev/null 2>&1; then
+  NERDCTL_BIN="$(resolve_nerdctl)" || return 1
+
+  if command -v sudo >/dev/null 2>&1 && sudo -n "$NERDCTL_BIN" info >/dev/null 2>&1; then
     USE_SUDO_NERDCTL=1
     return 0
   fi
 
-  if command -v nerdctl >/dev/null 2>&1 && nerdctl info >/dev/null 2>&1; then
+  if "$NERDCTL_BIN" info >/dev/null 2>&1; then
     USE_SUDO_NERDCTL=0
     return 0
   fi
@@ -59,9 +73,9 @@ nerdctl_ready() {
 
 nerdctl_run() {
   if [ "${USE_SUDO_NERDCTL:-0}" = "1" ]; then
-    sudo -n nerdctl "$@"
+    sudo -n "$NERDCTL_BIN" "$@"
   else
-    nerdctl "$@"
+    "$NERDCTL_BIN" "$@"
   fi
 }
 
