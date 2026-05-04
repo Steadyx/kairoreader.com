@@ -30,7 +30,7 @@ case "$(uname -m)" in
 esac
 
 apt-get update
-apt-get install -y ca-certificates curl git tar gzip sudo
+apt-get install -y ca-certificates curl git tar gzip sudo iptables iproute2
 
 if [ -z "${NERDCTL_VERSION:-}" ]; then
   NERDCTL_VERSION="$(curl -fsSL https://api.github.com/repos/containerd/nerdctl/releases/latest | sed -n 's/.*"tag_name": "v\([^"]*\)".*/\1/p' | head -n 1)"

@@ -91,6 +91,10 @@ nerdctl_run() {
 
 need curl
 
+if ! command -v iptables >/dev/null 2>&1; then
+  fail "iptables is missing. Run sudo sh .cicd/bootstrap-vps.sh once on the VPS, or install it with sudo apt-get install -y iptables."
+fi
+
 [ -f "$COMPOSE_FILE" ] || fail "missing $COMPOSE_FILE"
 
 site_domain="${SITE_DOMAIN:-$(env_value SITE_DOMAIN .env)}"
