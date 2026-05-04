@@ -173,7 +173,7 @@ function App() {
         <section id="features" class="relative px-5 py-24 sm:px-8 lg:px-10">
           <div class="mx-auto max-w-7xl">
             <div class="mb-12 max-w-3xl">
-              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Feature scroller</p>
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Reader workflow</p>
               <h2 class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
                 From library to high-speed focus, the path stays short.
               </h2>
@@ -231,7 +231,7 @@ function App() {
           <div class="mx-auto max-w-7xl">
             <div class="grid gap-12 lg:grid-cols-[1fr_1fr]">
               <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Small technical details</p>
+                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Under the hood</p>
                 <h2 class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
                   Native Android, local-first reading state, tuned RSVP pacing.
                 </h2>
@@ -289,7 +289,7 @@ function App() {
         <section class="px-5 pb-28 sm:px-8 lg:px-10" aria-labelledby="seo-title">
           <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Search intent</p>
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Calm speed reading</p>
               <h2 id="seo-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
                 For readers searching for calm speed.
               </h2>
@@ -364,11 +364,11 @@ function Header(props: { isDark: boolean; onToggleTheme: () => void }) {
 function HeroActions() {
   return (
     <div class="mt-10 max-w-2xl">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+      <div class="grid gap-3 sm:grid-cols-2">
         <button
           type="button"
           disabled
-          class="inline-flex min-h-[68px] w-full cursor-default items-center gap-3 rounded-lg bg-[#111] px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition dark:bg-paper dark:text-ink dark:ring-white/10 sm:w-auto sm:min-w-[252px]"
+          class="inline-flex min-h-[68px] w-full cursor-default items-center gap-3 rounded-lg bg-[#111] px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition dark:bg-paper dark:text-ink dark:ring-white/10"
           aria-label="Kairo is coming soon on Google Play"
         >
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white text-[#111] dark:bg-ink dark:text-paper">
@@ -381,15 +381,30 @@ function HeroActions() {
         </button>
 
         <a
-          class="inline-flex min-h-[68px] w-full items-center justify-center gap-2 rounded-lg border border-ink/12 bg-white/46 px-5 py-3 text-sm font-semibold text-ink shadow-sm transition hover:border-ember/50 hover:text-ember dark:border-white/12 dark:bg-white/[0.045] dark:text-paper dark:hover:border-ember/70 sm:w-auto"
-          href="#features"
+          class="inline-flex min-h-[68px] w-full items-center gap-3 rounded-lg border border-moss/30 bg-moss px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:bg-ink dark:border-white/10 dark:bg-white/10 dark:text-paper dark:hover:bg-white/[0.15]"
+          href="https://github.com/Steadyx/Kairo"
+          rel="noreferrer"
+          target="_blank"
+          aria-label="Contribute to Kairo on GitHub"
         >
-          Explore features
-          <Icon name="arrowRight" size={16} class="transition" />
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white/15 text-white ring-1 ring-white/20 dark:bg-paper dark:text-ink">
+            <Icon name="github" size={20} />
+          </span>
+          <span class="min-w-0">
+            <span class="block text-[0.65rem] font-semibold uppercase leading-none tracking-[0.14em] opacity-72">Want to contribute?</span>
+            <span class="mt-1 block text-lg font-semibold leading-none">View on GitHub</span>
+          </span>
         </a>
       </div>
 
       <div class="mt-4 flex flex-wrap items-center gap-2">
+        <a
+          class="inline-flex items-center gap-2 rounded-full border border-ink/12 px-4 py-2 text-sm font-semibold text-ink/70 transition hover:border-ember/50 hover:text-ember dark:border-white/12 dark:text-paper/70 dark:hover:border-ember/70"
+          href="#features"
+        >
+          Explore features
+          <Icon name="arrowRight" size={15} />
+        </a>
         <a
           class="inline-flex items-center gap-2 rounded-full border border-ink/12 px-4 py-2 text-sm font-semibold text-ink/70 transition hover:border-ember/50 hover:text-ember dark:border-white/12 dark:text-paper/70 dark:hover:border-ember/70"
           href="#technical"
@@ -413,7 +428,7 @@ function FeatureVisual(props: { feature: (typeof features)[number]; index: numbe
   return (
     <div class="relative flex h-full min-h-[460px] items-center justify-center overflow-hidden rounded-lg border border-ink/10 bg-veil/60 p-5 dark:border-white/10 dark:bg-white/[0.035]">
       <div class="absolute inset-x-0 top-0 flex justify-between px-5 py-4 text-xs font-semibold uppercase tracking-[0.18em] text-ink/42 dark:text-paper/38">
-        <span>Kairo loop</span>
+        <span>Reading path</span>
         <span>0{props.index + 1}</span>
       </div>
       <div class="feature-device w-full max-w-[420px]">
@@ -518,11 +533,8 @@ const iconNodes: Record<IconName, readonly IconNode[]> = {
     { tag: "path", d: "M3.34 19a10 10 0 1 1 17.32 0" },
   ],
   github: [
-    { tag: "circle", cx: 12, cy: 18, r: 3 },
-    { tag: "circle", cx: 6, cy: 6, r: 3 },
-    { tag: "circle", cx: 18, cy: 6, r: 3 },
-    { tag: "path", d: "M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9" },
-    { tag: "path", d: "M12 12v3" },
+    { tag: "path", d: "M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.5-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" },
+    { tag: "path", d: "M9 18c-4.51 2-5-2-7-2" },
   ],
   layers: [
     { tag: "path", d: "M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" },
