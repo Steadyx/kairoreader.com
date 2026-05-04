@@ -118,7 +118,9 @@ fi
 printf 'SITE_DOMAIN=%s\nACME_EMAIL=%s\n' "$normalized_domains" "$acme_email" > .env
 
 printf 'Deploying Kairo Reader for %s\n' "$normalized_domains"
-nerdctl_run compose -f "$COMPOSE_FILE" up -d --build
+nerdctl_run compose -f "$COMPOSE_FILE" build
+nerdctl_run compose -f "$COMPOSE_FILE" down
+nerdctl_run compose -f "$COMPOSE_FILE" up -d
 
 health_url="${HEALTHCHECK_URL:-https://$first_domain/}"
 printf 'Waiting for %s\n' "$health_url"
