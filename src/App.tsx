@@ -1,18 +1,4 @@
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import ArrowRight from "lucide-solid/icons/arrow-right";
-import BookOpen from "lucide-solid/icons/book-open";
-import Brain from "lucide-solid/icons/brain";
-import Check from "lucide-solid/icons/check";
-import Coffee from "lucide-solid/icons/coffee";
-import Gauge from "lucide-solid/icons/gauge";
-import GitFork from "lucide-solid/icons/git-fork";
-import Layers from "lucide-solid/icons/layers";
-import Moon from "lucide-solid/icons/moon";
-import Play from "lucide-solid/icons/play";
-import Sparkles from "lucide-solid/icons/sparkles";
-import Sun from "lucide-solid/icons/sun";
-import Timer from "lucide-solid/icons/timer";
-import type { LucideIcon } from "lucide-solid";
 
 type Theme = "light" | "dark";
 
@@ -386,7 +372,7 @@ function HeroActions() {
           aria-label="Kairo is coming soon on Google Play"
         >
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white text-[#111] dark:bg-ink dark:text-paper">
-            <Play size={21} fill="currentColor" strokeWidth={0} class="ml-0.5" aria-hidden="true" />
+            <Icon name="play" size={21} fill="currentColor" strokeWidth={0} class="ml-0.5" />
           </span>
           <span class="min-w-0">
             <span class="block text-[0.65rem] font-semibold uppercase leading-none tracking-[0.14em] opacity-72">Coming soon on</span>
@@ -494,33 +480,118 @@ type IconName =
   | "sun"
   | "timer";
 
-const iconComponents: Record<IconName, LucideIcon> = {
-  arrowRight: ArrowRight,
-  book: BookOpen,
-  brain: Brain,
-  check: Check,
-  coffee: Coffee,
-  gauge: Gauge,
-  github: GitFork,
-  layers: Layers,
-  moon: Moon,
-  play: Play,
-  sparkles: Sparkles,
-  sun: Sun,
-  timer: Timer,
+type IconNode =
+  | { tag: "path"; d: string }
+  | { tag: "circle"; cx: number; cy: number; r: number }
+  | { tag: "line"; x1: number; x2: number; y1: number; y2: number };
+
+const iconNodes: Record<IconName, readonly IconNode[]> = {
+  arrowRight: [
+    { tag: "path", d: "M5 12h14" },
+    { tag: "path", d: "m12 5 7 7-7 7" },
+  ],
+  book: [
+    { tag: "path", d: "M12 7v14" },
+    { tag: "path", d: "M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" },
+  ],
+  brain: [
+    { tag: "path", d: "M12 18V5" },
+    { tag: "path", d: "M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" },
+    { tag: "path", d: "M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" },
+    { tag: "path", d: "M17.997 5.125a4 4 0 0 1 2.526 5.77" },
+    { tag: "path", d: "M18 18a4 4 0 0 0 2-7.464" },
+    { tag: "path", d: "M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" },
+    { tag: "path", d: "M6 18a4 4 0 0 1-2-7.464" },
+    { tag: "path", d: "M6.003 5.125a4 4 0 0 0-2.526 5.77" },
+  ],
+  check: [
+    { tag: "path", d: "M20 6 9 17l-5-5" },
+  ],
+  coffee: [
+    { tag: "path", d: "M10 2v2" },
+    { tag: "path", d: "M14 2v2" },
+    { tag: "path", d: "M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1" },
+    { tag: "path", d: "M6 2v2" },
+  ],
+  gauge: [
+    { tag: "path", d: "m12 14 4-4" },
+    { tag: "path", d: "M3.34 19a10 10 0 1 1 17.32 0" },
+  ],
+  github: [
+    { tag: "circle", cx: 12, cy: 18, r: 3 },
+    { tag: "circle", cx: 6, cy: 6, r: 3 },
+    { tag: "circle", cx: 18, cy: 6, r: 3 },
+    { tag: "path", d: "M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9" },
+    { tag: "path", d: "M12 12v3" },
+  ],
+  layers: [
+    { tag: "path", d: "M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" },
+    { tag: "path", d: "M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" },
+    { tag: "path", d: "M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" },
+  ],
+  moon: [
+    { tag: "path", d: "M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" },
+  ],
+  play: [
+    { tag: "path", d: "M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" },
+  ],
+  sparkles: [
+    { tag: "path", d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" },
+    { tag: "path", d: "M20 2v4" },
+    { tag: "path", d: "M22 4h-4" },
+    { tag: "circle", cx: 4, cy: 20, r: 2 },
+  ],
+  sun: [
+    { tag: "circle", cx: 12, cy: 12, r: 4 },
+    { tag: "path", d: "M12 2v2" },
+    { tag: "path", d: "M12 20v2" },
+    { tag: "path", d: "m4.93 4.93 1.41 1.41" },
+    { tag: "path", d: "m17.66 17.66 1.41 1.41" },
+    { tag: "path", d: "M2 12h2" },
+    { tag: "path", d: "M20 12h2" },
+    { tag: "path", d: "m6.34 17.66-1.41 1.41" },
+    { tag: "path", d: "m19.07 4.93-1.41 1.41" },
+  ],
+  timer: [
+    { tag: "line", x1: 10, x2: 14, y1: 2, y2: 2 },
+    { tag: "line", x1: 12, x2: 15, y1: 14, y2: 11 },
+    { tag: "circle", cx: 12, cy: 14, r: 8 },
+  ],
 };
 
-function Icon(props: { name: IconName; size?: number; class?: string }) {
-  const Component = iconComponents[props.name];
+function Icon(props: { name: IconName; size?: number; class?: string; fill?: "none" | "currentColor"; strokeWidth?: number }) {
+  const size = () => props.size ?? 18;
+  const fill = () => props.fill ?? "none";
+  const strokeWidth = () => props.strokeWidth ?? 2;
 
   return (
-    <Component
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size()}
+      height={size()}
+      viewBox="0 0 24 24"
+      fill={fill()}
+      stroke="currentColor"
+      stroke-width={strokeWidth()}
+      stroke-linecap="round"
+      stroke-linejoin="round"
       class={props.class}
-      size={props.size ?? 18}
-      strokeWidth={2}
       aria-hidden="true"
-    />
+    >
+      <For each={iconNodes[props.name]}>{(node) => <IconShape node={node} />}</For>
+    </svg>
   );
+}
+
+function IconShape(props: { node: IconNode }) {
+  switch (props.node.tag) {
+    case "circle":
+      return <circle cx={props.node.cx} cy={props.node.cy} r={props.node.r} />;
+    case "line":
+      return <line x1={props.node.x1} x2={props.node.x2} y1={props.node.y1} y2={props.node.y2} />;
+    case "path":
+      return <path d={props.node.d} />;
+  }
 }
 
 export default App;
