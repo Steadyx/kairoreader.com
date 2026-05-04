@@ -20,6 +20,7 @@
     "container:down": "node scripts/kairo.mjs container-stop"
   },
   "dependencies": {
+    "lucide-solid": "^1.14.0",
     "solid-js": "^1.8.22"
   },
   "devDependencies": {

@@ -1,5 +1,18 @@
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import type { JSX } from "solid-js";
+import ArrowRight from "lucide-solid/icons/arrow-right";
+import BookOpen from "lucide-solid/icons/book-open";
+import Brain from "lucide-solid/icons/brain";
+import Check from "lucide-solid/icons/check";
+import Coffee from "lucide-solid/icons/coffee";
+import Gauge from "lucide-solid/icons/gauge";
+import GitFork from "lucide-solid/icons/git-fork";
+import Layers from "lucide-solid/icons/layers";
+import Moon from "lucide-solid/icons/moon";
+import Play from "lucide-solid/icons/play";
+import Sparkles from "lucide-solid/icons/sparkles";
+import Sun from "lucide-solid/icons/sun";
+import Timer from "lucide-solid/icons/timer";
+import type { LucideIcon } from "lucide-solid";
 
 type Theme = "light" | "dark";
 
@@ -150,23 +163,7 @@ function App() {
                 A calm RSVP reader for Android, built for speed reading without chaos. Import DRM-free EPUB or MOBI books, read normally, then shift into focused word-by-word momentum.
               </p>
 
-              <div class="mt-10 flex flex-wrap gap-3">
-                <a class="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-paper transition hover:bg-moss dark:bg-paper dark:text-ink dark:hover:bg-veil" href="#features">
-                  Explore features
-                  <Icon name="arrowRight" size={16} />
-                </a>
-                <a class="inline-flex items-center gap-2 rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition hover:border-ember/50 hover:text-ember dark:border-white/15 dark:text-paper dark:hover:border-ember/70" href="#technical">
-                  Technical notes
-                  <Icon name="layers" size={16} />
-                </a>
-                <a
-                  aria-disabled="true"
-                  class="inline-flex cursor-default items-center gap-2 rounded-full border border-[#191611]/10 bg-[#ffdd00] px-5 py-3 text-sm font-semibold text-[#191611] shadow-sm ring-1 ring-white/35"
-                >
-                  <Icon name="coffee" size={16} />
-                  Buy me a coffee
-                </a>
-              </div>
+              <HeroActions />
 
               <dl class="mt-12 grid max-w-2xl grid-cols-3 gap-4 border-y border-ink/10 py-5 dark:border-white/10">
                 <Stat label="Formats" value="EPUB / MOBI" />
@@ -378,6 +375,54 @@ function Header(props: { isDark: boolean; onToggleTheme: () => void }) {
   );
 }
 
+function HeroActions() {
+  return (
+    <div class="mt-10 max-w-2xl">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+        <button
+          type="button"
+          disabled
+          class="inline-flex min-h-[68px] w-full cursor-default items-center gap-3 rounded-lg bg-[#111] px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition dark:bg-paper dark:text-ink dark:ring-white/10 sm:w-auto sm:min-w-[252px]"
+          aria-label="Kairo is coming soon on Google Play"
+        >
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white text-[#111] dark:bg-ink dark:text-paper">
+            <Play size={21} fill="currentColor" strokeWidth={0} class="ml-0.5" aria-hidden="true" />
+          </span>
+          <span class="min-w-0">
+            <span class="block text-[0.65rem] font-semibold uppercase leading-none tracking-[0.14em] opacity-72">Coming soon on</span>
+            <span class="mt-1 block text-lg font-semibold leading-none">Google Play</span>
+          </span>
+        </button>
+
+        <a
+          class="inline-flex min-h-[68px] w-full items-center justify-center gap-2 rounded-lg border border-ink/12 bg-white/46 px-5 py-3 text-sm font-semibold text-ink shadow-sm transition hover:border-ember/50 hover:text-ember dark:border-white/12 dark:bg-white/[0.045] dark:text-paper dark:hover:border-ember/70 sm:w-auto"
+          href="#features"
+        >
+          Explore features
+          <Icon name="arrowRight" size={16} class="transition" />
+        </a>
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center gap-2">
+        <a
+          class="inline-flex items-center gap-2 rounded-full border border-ink/12 px-4 py-2 text-sm font-semibold text-ink/70 transition hover:border-ember/50 hover:text-ember dark:border-white/12 dark:text-paper/70 dark:hover:border-ember/70"
+          href="#technical"
+        >
+          <Icon name="layers" size={15} />
+          Technical notes
+        </a>
+        <span
+          aria-disabled="true"
+          class="inline-flex cursor-default items-center gap-2 rounded-full border border-[#191611]/10 bg-[#ffdd00] px-4 py-2 text-sm font-semibold text-[#191611] shadow-sm ring-1 ring-white/35"
+        >
+          <Icon name="coffee" size={15} />
+          Buy me a coffee
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function FeatureVisual(props: { feature: (typeof features)[number]; index: number }) {
   return (
     <div class="relative flex h-full min-h-[460px] items-center justify-center overflow-hidden rounded-lg border border-ink/10 bg-veil/60 p-5 dark:border-white/10 dark:bg-white/[0.035]">
@@ -449,106 +494,32 @@ type IconName =
   | "sun"
   | "timer";
 
-const iconPaths: Record<IconName, JSX.Element> = {
-  arrowRight: (
-    <>
-      <path d="M5 12h14" />
-      <path d="m12 5 7 7-7 7" />
-    </>
-  ),
-  book: (
-    <>
-      <path d="M12 7v14" />
-      <path d="M3 18a3 3 0 0 1 3-3h14" />
-      <path d="M3 6a3 3 0 0 1 3-3h14v18H6a3 3 0 0 0-3 3z" />
-    </>
-  ),
-  brain: (
-    <>
-      <path d="M8 6a3 3 0 0 1 6 0v12a3 3 0 0 1-6 0z" />
-      <path d="M14 6a3 3 0 0 1 6 0 3 3 0 0 1-1.1 2.3A4 4 0 0 1 20 16a3 3 0 0 1-3 5" />
-      <path d="M8 6a3 3 0 0 0-6 0 3 3 0 0 0 1.1 2.3A4 4 0 0 0 2 16a3 3 0 0 0 3 5" />
-    </>
-  ),
-  check: <path d="m5 12 4 4L19 6" />,
-  coffee: (
-    <>
-      <path d="M10 2v2" />
-      <path d="M14 2v2" />
-      <path d="M16 8h2a4 4 0 0 1 0 8h-2" />
-      <path d="M4 8h12v7a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5Z" />
-      <path d="M6 22h10" />
-    </>
-  ),
-  gauge: (
-    <>
-      <path d="M12 14l4-4" />
-      <path d="M3.34 19a10 10 0 1 1 17.32 0" />
-    </>
-  ),
-  github: (
-    <>
-      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5a10.4 10.4 0 0 0-5.5 0C8.5 2 7.5 2 7.5 2a6.2 6.2 0 0 0 0 3.5c-.73 1.02-1.08 2.25-1 3.5 0 3.5 3 5.5 6 5.5a4.8 4.8 0 0 0-1 3.5v4" />
-      <path d="M9 18c-4.5 2-5-2-7-2" />
-    </>
-  ),
-  layers: (
-    <>
-      <path d="m12 2 9 5-9 5-9-5z" />
-      <path d="m3 12 9 5 9-5" />
-      <path d="m3 17 9 5 9-5" />
-    </>
-  ),
-  moon: <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />,
-  play: <path d="m8 5 11 7-11 7z" />,
-  sparkles: (
-    <>
-      <path d="M12 3 10 9l-6 2 6 2 2 6 2-6 6-2-6-2z" />
-      <path d="M19 3v4" />
-      <path d="M21 5h-4" />
-      <path d="M5 17v3" />
-      <path d="M6.5 18.5h-3" />
-    </>
-  ),
-  sun: (
-    <>
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="m4.93 4.93 1.41 1.41" />
-      <path d="m17.66 17.66 1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="m6.34 17.66-1.41 1.41" />
-      <path d="m19.07 4.93-1.41 1.41" />
-    </>
-  ),
-  timer: (
-    <>
-      <path d="M10 2h4" />
-      <path d="M12 14v-4" />
-      <path d="M4 13a8 8 0 1 0 3-6.25" />
-      <path d="M5 3 2 6l3 3" />
-    </>
-  ),
+const iconComponents: Record<IconName, LucideIcon> = {
+  arrowRight: ArrowRight,
+  book: BookOpen,
+  brain: Brain,
+  check: Check,
+  coffee: Coffee,
+  gauge: Gauge,
+  github: GitFork,
+  layers: Layers,
+  moon: Moon,
+  play: Play,
+  sparkles: Sparkles,
+  sun: Sun,
+  timer: Timer,
 };
 
 function Icon(props: { name: IconName; size?: number; class?: string }) {
+  const Component = iconComponents[props.name];
+
   return (
-    <svg
+    <Component
       class={props.class}
-      width={props.size ?? 18}
-      height={props.size ?? 18}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      size={props.size ?? 18}
+      strokeWidth={2}
       aria-hidden="true"
-    >
-      {iconPaths[props.name]}
-    </svg>
+    />
   );
 }
 
