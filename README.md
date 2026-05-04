@@ -63,27 +63,3 @@ If you prefer direct compose:
 ```bash
 colima nerdctl -- compose -f compose.local.yaml up --build
 ```
-
-## Production Deploy
-
-Pushing to `main` runs `.github/workflows/deploy.yml`. The workflow checks and builds the Solid app, uploads the source over SSH, and runs `.cicd/deploy.sh` on the VPS.
-
-Required GitHub repository secrets:
-
-```text
-VPS_HOST=your.vps.ip.or.hostname
-VPS_PORT=22
-VPS_USER=root
-VPS_SSH_KEY=private SSH key for the VPS user
-VPS_APP_DIR=/opt/kairoreader.com
-SITE_DOMAIN=kairoreader.com,www.kairoreader.com
-ACME_EMAIL=you@example.com
-```
-
-Run the VPS bootstrap once before the first deployment if containerd, buildkit, and nerdctl are not installed:
-
-```bash
-sudo sh .cicd/bootstrap-vps.sh
-```
-
-DNS must point the domain at the VPS, and inbound TCP `80` and `443` must be open. Caddy will request and renew HTTPS certificates automatically once the domain resolves to the server.
