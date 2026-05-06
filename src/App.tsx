@@ -1,4 +1,5 @@
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { seoPageForPath, seoPages, siteOrigin, type SeoPage } from "./seoContent";
 
 type Theme = "light" | "dark";
 
@@ -57,19 +58,75 @@ const profiles = [
 ];
 
 const keywords = [
+  "RSVP reading app",
   "RSVP reading",
+  "Android RSVP reader",
   "speed reading",
+  "speed reading app",
   "calm reader",
+  "calm speed reading",
   "focus reading",
   "Android ebook reader",
   "ORP highlighting",
+  "EPUB speed reading",
   "EPUB reader",
   "MOBI reader",
 ];
 
-function App() {
+const faqItems = [
+  {
+    question: "What is RSVP reading?",
+    answer:
+      "RSVP reading shows one word or short text unit at a fixed point, reducing eye movement. Kairo uses RSVP as its main reading mode and shapes timing around punctuation, word length, and sentence flow so speed reading feels calmer.",
+  },
+  {
+    question: "Is Kairo a speed reading app or an ebook reader?",
+    answer:
+      "Kairo is both. It combines a quiet Android ebook reader with an RSVP speed reading mode, so you can import a book, read with normal context, and launch focused word-by-word reading from the same position.",
+  },
+  {
+    question: "Can Kairo import EPUB and MOBI books?",
+    answer:
+      "Yes. Kairo imports DRM-free EPUB and MOBI files from Android storage, extracts chapters, metadata, and covers where available, and keeps reading progress on the device.",
+  },
+  {
+    question: "Does Kairo use ORP highlighting?",
+    answer:
+      "Yes. Kairo anchors words around the optimal recognition point and can show ORP guidance so your eyes have a consistent focus point during RSVP reading.",
+  },
+  {
+    question: "How does Kairo keep speed reading calm?",
+    answer:
+      "Kairo uses adaptive pacing, low-glare themes, focus mode, bookmarks, persistent reader settings, and RSVP profiles for different reading rhythms. The goal is controlled reading momentum rather than frantic word flashing.",
+  },
+  {
+    question: "Is Kairo available on Google Play?",
+    answer:
+      "Kairo is coming soon to Google Play. The Android project is available on GitHub while the release is prepared.",
+  },
+] as const;
+
+const faqStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://kairoreader.com/#faq",
+  url: "https://kairoreader.com/#faq",
+  name: "Kairo RSVP Reader FAQs",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
+function App(props: { initialPath?: string } = {}) {
   const [theme, setTheme] = createSignal<Theme>("dark");
   const [activeFeature, setActiveFeature] = createSignal(0);
+  const routePath = props.initialPath ?? (typeof window === "undefined" ? "/" : window.location.pathname);
+  const intentPage = seoPageForPath(routePath);
 
   onMount(() => {
     let storedTheme: Theme | null = null;
@@ -124,9 +181,19 @@ function App() {
     }
   };
 
+  if (intentPage) {
+    return (
+      <div class="min-h-screen bg-paper text-ink antialiased transition-colors duration-500 dark:bg-ink dark:text-paper">
+        <Header isDark={isDark()} isHome={false} onToggleTheme={toggleTheme} />
+        <IntentPage page={intentPage} />
+        <Footer isHome={false} />
+      </div>
+    );
+  }
+
   return (
     <div class="min-h-screen bg-paper text-ink antialiased transition-colors duration-500 dark:bg-ink dark:text-paper">
-      <Header isDark={isDark()} onToggleTheme={toggleTheme} />
+      <Header isDark={isDark()} isHome={true} onToggleTheme={toggleTheme} />
       <main>
         <section class="relative isolate overflow-hidden px-5 pt-24 sm:px-8 lg:px-10" aria-labelledby="hero-title">
           <div class="absolute inset-0 -z-20 bg-paper dark:bg-ink" />
@@ -138,7 +205,7 @@ function App() {
                 class="group mb-7 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/55 px-3 py-2 text-sm font-medium text-ink shadow-sm backdrop-blur transition hover:border-ember/35 hover:text-ember dark:border-white/10 dark:bg-white/5 dark:text-paper dark:hover:border-ember/60"
               >
                 <Icon name="sparkles" size={16} />
-                RSVP-first reader for Android
+                RSVP reading app for Android
                 <Icon name="arrowRight" size={15} class="transition group-hover:translate-x-0.5" />
               </a>
 
@@ -146,7 +213,7 @@ function App() {
                 Kairo
               </h1>
               <p class="mt-7 max-w-2xl text-pretty text-xl leading-8 text-ink/72 dark:text-paper/72">
-                A calm RSVP reader for Android, built for speed reading without chaos. Import DRM-free EPUB or MOBI books, read normally, then shift into focused word-by-word momentum.
+                A calm RSVP reading app for Android, built for speed reading without chaos. Import DRM-free EPUB or MOBI books, read normally, then shift into focused word-by-word momentum.
               </p>
 
               <HeroActions />
@@ -291,12 +358,12 @@ function App() {
             <div>
               <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Calm speed reading</p>
               <h2 id="seo-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-                For readers searching for calm speed.
+                For readers searching for an RSVP reading app.
               </h2>
             </div>
             <div>
               <p class="text-lg leading-8 text-ink/70 dark:text-paper/68">
-                Kairo is for RSVP reading, speed reading practice, calm reader workflows, focus reading sessions, and mobile ebook reading where the experience stays sparse, readable, and under the reader's control.
+                Kairo is for RSVP reading app searches, Android RSVP reader workflows, speed reading practice, calm reader sessions, EPUB speed reading, MOBI ebook import, and focus reading where the experience stays sparse, readable, and under the reader's control.
               </p>
               <div class="mt-8 flex flex-wrap gap-2">
                 <For each={keywords}>
@@ -310,41 +377,234 @@ function App() {
             </div>
           </div>
         </section>
+
+        <CoverageSection />
+
+        <section id="faq" class="border-t border-ink/10 bg-veil/42 px-5 py-24 transition-colors dark:border-white/10 dark:bg-white/[0.03] sm:px-8 lg:px-10" aria-labelledby="faq-title">
+          <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.72fr_1.28fr]">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">FAQ</p>
+              <h2 id="faq-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
+                Common questions about RSVP reading with Kairo.
+              </h2>
+              <p class="mt-6 max-w-xl text-lg leading-8 text-ink/68 dark:text-paper/66">
+                Short answers for readers comparing RSVP reading, calm speed reading apps, Android ebook readers, EPUB import, MOBI import, and ORP highlighting.
+              </p>
+            </div>
+
+            <div class="grid gap-4">
+              <For each={faqItems}>
+                {(item) => (
+                  <article class="rounded-lg border border-ink/10 bg-white/60 p-5 shadow-sm transition dark:border-white/10 dark:bg-white/[0.045] sm:p-6">
+                    <h3 class="text-xl font-semibold tracking-normal text-ink dark:text-paper">{item.question}</h3>
+                    <p class="mt-4 text-base leading-7 text-ink/68 dark:text-paper/66">{item.answer}</p>
+                  </article>
+                )}
+              </For>
+            </div>
+          </div>
+
+          <script type="application/ld+json">{JSON.stringify(faqStructuredData)}</script>
+        </section>
       </main>
 
-      <footer class="border-t border-ink/10 px-5 py-10 dark:border-white/10 sm:px-8 lg:px-10">
-        <div class="mx-auto flex max-w-7xl flex-col justify-between gap-6 text-sm text-ink/56 dark:text-paper/52 md:flex-row md:items-center">
-          <div class="flex items-center gap-3">
-            <img src="/assets/kairo-icon.png" alt="" class="h-8 w-8 rounded-lg" />
-            <span>Kairo RSVP Reader</span>
-          </div>
-          <div class="flex flex-wrap gap-4">
-            <a class="hover:text-ember" href="#features">Features</a>
-            <a class="hover:text-ember" href="#about">About</a>
-            <a class="hover:text-ember" href="#technical">Technical</a>
-            <a class="inline-flex items-center gap-1.5 hover:text-ember" href="https://github.com/Steadyx/Kairo" rel="noreferrer" target="_blank">
-              <Icon name="github" size={15} />
-              GitHub
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer isHome={true} />
     </div>
   );
 }
 
-function Header(props: { isDark: boolean; onToggleTheme: () => void }) {
+function CoverageSection() {
+  return (
+    <section id="coverage" class="border-t border-ink/10 px-5 pb-28 pt-24 dark:border-white/10 sm:px-8 lg:px-10" aria-labelledby="coverage-title">
+      <div class="mx-auto max-w-7xl">
+        <div class="mb-10 max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Reading guides</p>
+          <h2 id="coverage-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
+            More ways to find the right RSVP reader.
+          </h2>
+          <p class="mt-6 text-lg leading-8 text-ink/68 dark:text-paper/66">
+            Focused pages cover the searches readers actually use: RSVP reading app, Android RSVP reader, EPUB speed reading, MOBI import, ORP highlighting, and calm speed reading.
+          </p>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <For each={seoPages}>
+            {(page) => (
+              <a
+                href={page.path}
+                class="group rounded-lg border border-ink/10 bg-white/60 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-ember/35 hover:shadow-soft dark:border-white/10 dark:bg-white/[0.045] dark:hover:border-ember/55 sm:p-6"
+              >
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ember">{page.eyebrow}</p>
+                <h3 class="mt-4 text-2xl font-semibold tracking-normal">{page.navLabel}</h3>
+                <p class="mt-4 text-sm leading-6 text-ink/64 dark:text-paper/62">{page.description}</p>
+                <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-moss transition group-hover:text-ember dark:text-veil">
+                  Read the guide
+                  <Icon name="arrowRight" size={15} class="transition group-hover:translate-x-0.5" />
+                </span>
+              </a>
+            )}
+          </For>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function IntentPage(props: { page: SeoPage }) {
+  return (
+    <main>
+      <article class="px-5 pb-20 pt-28 sm:px-8 lg:px-10">
+        <div class="mx-auto max-w-5xl">
+          <nav class="mb-9 flex flex-wrap items-center gap-2 text-sm font-semibold text-ink/52 dark:text-paper/50" aria-label="Breadcrumb">
+            <a class="hover:text-ember" href="/">Kairo</a>
+            <span aria-hidden="true">/</span>
+            <span class="text-ink/70 dark:text-paper/68">{props.page.navLabel}</span>
+          </nav>
+
+          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">{props.page.eyebrow}</p>
+          <h1 class="mt-5 max-w-4xl text-balance text-5xl font-semibold leading-[0.98] tracking-normal sm:text-6xl">
+            {props.page.heading}
+          </h1>
+          <p class="mt-7 max-w-3xl text-xl leading-8 text-ink/72 dark:text-paper/70">{props.page.summary}</p>
+
+          <div class="mt-8 flex flex-wrap gap-2">
+            <For each={props.page.keywords}>
+              {(keyword) => (
+                <span class="rounded-full border border-ink/10 px-3 py-1.5 text-sm font-semibold text-ink/58 dark:border-white/10 dark:text-paper/56">
+                  {keyword}
+                </span>
+              )}
+            </For>
+          </div>
+        </div>
+      </article>
+
+      <section class="border-y border-ink/10 bg-veil/45 px-5 py-20 dark:border-white/10 dark:bg-white/[0.03] sm:px-8 lg:px-10">
+        <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-3">
+          <For each={props.page.sections}>
+            {(section) => (
+              <section class="rounded-lg border border-ink/10 bg-white/60 p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.045]">
+                <h2 class="text-2xl font-semibold tracking-normal">{section.title}</h2>
+                <p class="mt-5 text-base leading-7 text-ink/68 dark:text-paper/66">{section.body}</p>
+              </section>
+            )}
+          </For>
+        </div>
+      </section>
+
+      <section class="px-5 py-20 sm:px-8 lg:px-10">
+        <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.82fr_1.18fr]">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Why it fits</p>
+            <h2 class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
+              Built for focused ebook reading, not only speed.
+            </h2>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <For each={props.page.highlights}>
+              {(highlight) => (
+                <div class="flex items-center gap-3 rounded-lg border border-ink/10 bg-white/58 p-4 text-sm font-semibold text-ink/72 dark:border-white/10 dark:bg-white/[0.04] dark:text-paper/70">
+                  <Icon name="check" size={16} />
+                  {highlight}
+                </div>
+              )}
+            </For>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-ink/10 px-5 pb-24 pt-20 dark:border-white/10 sm:px-8 lg:px-10">
+        <div class="mx-auto max-w-7xl">
+          <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Related reading</p>
+              <h2 class="mt-4 text-3xl font-semibold tracking-normal sm:text-4xl">Explore the rest of Kairo.</h2>
+            </div>
+            <a class="inline-flex items-center gap-2 text-sm font-semibold text-moss hover:text-ember dark:text-veil" href="/#features">
+              See product features
+              <Icon name="arrowRight" size={15} />
+            </a>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-3">
+            <For each={props.page.related.map((path) => seoPages.find((page) => page.path === path)).filter((page): page is SeoPage => Boolean(page))}>
+              {(page) => (
+                <a class="rounded-lg border border-ink/10 bg-white/58 p-5 transition hover:border-ember/40 dark:border-white/10 dark:bg-white/[0.04]" href={page.path}>
+                  <p class="text-sm font-semibold text-ember">{page.eyebrow}</p>
+                  <h3 class="mt-3 text-xl font-semibold">{page.navLabel}</h3>
+                  <p class="mt-3 text-sm leading-6 text-ink/62 dark:text-paper/60">{page.summary}</p>
+                </a>
+              )}
+            </For>
+          </div>
+        </div>
+      </section>
+
+      <script type="application/ld+json">{JSON.stringify(intentPageStructuredData(props.page))}</script>
+    </main>
+  );
+}
+
+function intentPageStructuredData(page: SeoPage) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${siteOrigin}${page.path}#webpage`,
+    url: `${siteOrigin}${page.path}`,
+    name: page.title,
+    description: page.description,
+    isPartOf: {
+      "@id": `${siteOrigin}/#website`,
+    },
+    about: page.keywords.map((keyword) => ({
+      "@type": "Thing",
+      name: keyword,
+    })),
+  };
+}
+
+function Footer(props: { isHome: boolean }) {
+  const sectionHref = (hash: string) => (props.isHome ? hash : `/${hash}`);
+
+  return (
+    <footer class="border-t border-ink/10 px-5 py-10 dark:border-white/10 sm:px-8 lg:px-10">
+      <div class="mx-auto flex max-w-7xl flex-col justify-between gap-6 text-sm text-ink/56 dark:text-paper/52 md:flex-row md:items-center">
+        <div class="flex items-center gap-3">
+          <img src="/assets/kairo-icon.png" alt="" class="h-8 w-8 rounded-lg" />
+          <span>Kairo RSVP Reader</span>
+        </div>
+        <div class="flex flex-wrap gap-4">
+          <a class="hover:text-ember" href={sectionHref("#features")}>Features</a>
+          <a class="hover:text-ember" href={sectionHref("#about")}>About</a>
+          <a class="hover:text-ember" href={sectionHref("#technical")}>Technical</a>
+          <a class="hover:text-ember" href={sectionHref("#coverage")}>Guides</a>
+          <a class="hover:text-ember" href={sectionHref("#faq")}>FAQ</a>
+          <a class="inline-flex items-center gap-1.5 hover:text-ember" href="https://github.com/Steadyx/Kairo" rel="noreferrer" target="_blank">
+            <Icon name="github" size={15} />
+            GitHub
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function Header(props: { isDark: boolean; isHome: boolean; onToggleTheme: () => void }) {
+  const sectionHref = (hash: string) => (props.isHome ? hash : `/${hash}`);
+
   return (
     <header class="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-paper/72 px-5 py-3 backdrop-blur-xl dark:border-white/10 dark:bg-ink/72 sm:px-8 lg:px-10">
       <nav class="mx-auto flex max-w-7xl items-center justify-between gap-5" aria-label="Primary navigation">
-        <a href="#" class="flex items-center gap-3 text-sm font-semibold">
+        <a href="/" class="flex items-center gap-3 text-sm font-semibold">
           <img src="/assets/kairo-icon.png" alt="" class="h-8 w-8 rounded-lg" />
           <span>Kairo</span>
         </a>
         <div class="hidden items-center gap-6 text-sm font-medium text-ink/62 dark:text-paper/62 md:flex">
-          <a class="hover:text-ember" href="#features">Features</a>
-          <a class="hover:text-ember" href="#about">About</a>
-          <a class="hover:text-ember" href="#technical">Technical</a>
+          <a class="hover:text-ember" href={sectionHref("#features")}>Features</a>
+          <a class="hover:text-ember" href={sectionHref("#about")}>About</a>
+          <a class="hover:text-ember" href={sectionHref("#technical")}>Technical</a>
+          <a class="hover:text-ember" href={sectionHref("#coverage")}>Guides</a>
+          <a class="hover:text-ember" href={sectionHref("#faq")}>FAQ</a>
         </div>
         <button
           type="button"
