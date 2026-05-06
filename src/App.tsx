@@ -1,5 +1,5 @@
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import { seoPageForPath, seoPages, siteOrigin, type SeoPage } from "./seoContent";
+import { privacyPolicyForPath, seoPageForPath, seoPages, siteOrigin, type SeoPage } from "./seoContent";
 
 type Theme = "light" | "dark";
 
@@ -122,10 +122,98 @@ const faqStructuredData = {
   })),
 };
 
+const privacyLastUpdated = "May 6, 2026";
+
+const privacySummaryCards = [
+  {
+    title: "No developer-operated collection",
+    body: "Kairo does not send imported books, reading progress, bookmarks, preferences, analytics, advertising identifiers, crash reports, or account data to a Kairo server.",
+  },
+  {
+    title: "Local reading data",
+    body: "Books you choose to import, extracted book content, covers, metadata, bookmarks, progress, and settings are stored on your device so the reader works offline.",
+  },
+  {
+    title: "No ads or tracking",
+    body: "The current Android app does not include advertising SDKs, analytics SDKs, social tracking SDKs, or third-party payment processing.",
+  },
+];
+
+const privacyDataRows = [
+  {
+    title: "User-selected ebook files",
+    access: "DRM-free EPUB and MOBI files that you import or open with Kairo.",
+    purpose: "To parse the book, show chapters, covers, images, metadata, and text, and support normal reading plus RSVP reading.",
+    handling: "Processed locally and stored in Kairo's app-private storage unless you delete the book, clear app data, or uninstall the app.",
+  },
+  {
+    title: "Reading state and preferences",
+    access: "Bookmarks, completed status, reading position, RSVP speed/profile settings, theme, typography, language, and focus preferences.",
+    purpose: "To resume your place, keep the reading experience consistent, and apply the reading controls you choose.",
+    handling: "Stored locally in the app database and preferences. Kairo does not transmit this data to the developer.",
+  },
+  {
+    title: "Notification policy access",
+    access: "Android notification policy access, only if you enable Focus Mode notification pausing and grant that Android permission.",
+    purpose: "To temporarily reduce interruptions during a focus reading session and then restore the previous interruption setting.",
+    handling: "Used on-device only. Kairo does not read notification content or send notification data anywhere.",
+  },
+  {
+    title: "Android backup",
+    access: "If Android backup is enabled for your device, Android may back up Kairo's local database and preferences to your Google account.",
+    purpose: "To support device restore using Android's system backup behavior.",
+    handling: "Handled by Android/Google backup systems. The Kairo developer does not receive or access those backups.",
+  },
+  {
+    title: "Privacy inquiries",
+    access: "Your email address and the content of messages you send to the privacy contact.",
+    purpose: "To answer privacy, support, deletion, or policy questions.",
+    handling: "Used only to respond to your inquiry and retained only as long as needed for support, legal, or abuse-prevention purposes.",
+  },
+];
+
+const privacySections = [
+  {
+    title: "Collection and sharing",
+    paragraphs: [
+      "Kairo does not operate a cloud account system and does not collect app usage data on developer-controlled servers. The current Android app does not declare the Android internet permission, and it is designed for local, offline reading.",
+      "Kairo does not sell personal data. Kairo does not share imported books, reading progress, bookmarks, preferences, device identifiers, analytics, or advertising data with third parties. The only third-party handling described in this policy is Android system behavior, such as optional device backup controlled by your Android and Google account settings.",
+    ],
+  },
+  {
+    title: "Secure handling",
+    paragraphs: [
+      "Kairo stores app data in Android app-private storage, including its local database and preferences. Android's app sandbox limits other apps' access to that storage under normal device security rules.",
+      "Because Kairo does not send your reading data to a Kairo service, there is no developer-operated transmission of imported books, reading progress, or bookmarks. If Android backup is enabled, backup transfer and storage are handled by Android/Google under your device and Google account settings.",
+    ],
+  },
+  {
+    title: "Retention and deletion",
+    paragraphs: [
+      "Imported books, extracted book content, covers, bookmarks, progress, and preferences remain on your device until you remove them. You can delete app data by deleting books in Kairo where available, clearing Kairo's app storage in Android settings, or uninstalling Kairo.",
+      "If Android backup is enabled, copies of database and preference data may remain in your Android/Google backup until removed according to your device backup settings. Kairo does not have access to those backups.",
+    ],
+  },
+  {
+    title: "Accounts and children",
+    paragraphs: [
+      "Kairo does not currently provide user accounts, sign-in, subscriptions, payments, or an external account deletion flow. If account functionality is added in the future, this policy and any required account deletion resource will be updated before release.",
+      "Kairo is not directed to children and does not knowingly collect personal information from children. If you believe a child has sent personal information through a privacy inquiry, contact the privacy address below so it can be deleted.",
+    ],
+  },
+  {
+    title: "Changes to this policy",
+    paragraphs: [
+      "This page may be updated when Kairo's app behavior, data handling, third-party services, or Google Play requirements change. The latest version will keep the effective date near the top of the page.",
+    ],
+  },
+];
+
 function App(props: { initialPath?: string } = {}) {
   const [theme, setTheme] = createSignal<Theme>("dark");
   const [activeFeature, setActiveFeature] = createSignal(0);
   const routePath = props.initialPath ?? (typeof window === "undefined" ? "/" : window.location.pathname);
+  const privacyPage = privacyPolicyForPath(routePath);
   const intentPage = seoPageForPath(routePath);
 
   onMount(() => {
@@ -180,6 +268,16 @@ function App(props: { initialPath?: string } = {}) {
       // The visual theme should still switch if storage is unavailable.
     }
   };
+
+  if (privacyPage) {
+    return (
+      <div class="min-h-screen bg-paper text-ink antialiased transition-colors duration-500 dark:bg-ink dark:text-paper">
+        <Header isDark={isDark()} isHome={false} onToggleTheme={toggleTheme} />
+        <PrivacyPolicyPage />
+        <Footer isHome={false} />
+      </div>
+    );
+  }
 
   if (intentPage) {
     return (
@@ -545,6 +643,161 @@ function IntentPage(props: { page: SeoPage }) {
   );
 }
 
+function PrivacyPolicyPage() {
+  const privacyStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${siteOrigin}/privacy-policy/#privacy-policy`,
+    url: `${siteOrigin}/privacy-policy/`,
+    name: "Privacy Policy | Kairo RSVP Reader",
+    dateModified: "2026-05-06",
+    publisher: {
+      "@type": "Person",
+      name: "Edward Kemp",
+    },
+    about: {
+      "@id": `${siteOrigin}/#app`,
+    },
+  };
+
+  return (
+    <main>
+      <article class="px-5 pb-16 pt-28 sm:px-8 lg:px-10">
+        <div class="mx-auto max-w-5xl">
+          <nav class="mb-9 flex flex-wrap items-center gap-2 text-sm font-semibold text-ink/52 dark:text-paper/50" aria-label="Breadcrumb">
+            <a class="hover:text-ember" href="/">Kairo</a>
+            <span aria-hidden="true">/</span>
+            <span class="text-ink/70 dark:text-paper/68">Privacy Policy</span>
+          </nav>
+
+          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Privacy Policy</p>
+          <h1 class="mt-5 max-w-4xl text-balance text-5xl font-semibold leading-[0.98] tracking-normal sm:text-6xl">
+            Privacy Policy
+          </h1>
+          <p class="mt-5 text-sm font-semibold text-ink/54 dark:text-paper/52">Last updated: {privacyLastUpdated}</p>
+          <p class="mt-7 max-w-3xl text-xl leading-8 text-ink/72 dark:text-paper/70">
+            This Privacy Policy applies to Kairo, also referred to as Kairo RSVP Reader, an Android app for importing DRM-free EPUB and MOBI books and reading them locally with normal reader and RSVP reading modes.
+          </p>
+
+          <dl class="mt-10 grid gap-3 rounded-lg border border-ink/10 bg-white/56 p-5 dark:border-white/10 dark:bg-white/[0.04] sm:grid-cols-3 sm:p-6">
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">App</dt>
+              <dd class="mt-2 text-sm font-semibold">Kairo RSVP Reader</dd>
+            </div>
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">Developer</dt>
+              <dd class="mt-2 text-sm font-semibold">Edward Kemp</dd>
+            </div>
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">Contact</dt>
+              <dd class="mt-2 text-sm font-semibold">
+                <a class="text-moss hover:text-ember dark:text-veil" href="mailto:kairoapp@proton.me">kairoapp@proton.me</a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </article>
+
+      <section class="border-y border-ink/10 bg-veil/45 px-5 py-16 dark:border-white/10 dark:bg-white/[0.03] sm:px-8 lg:px-10" aria-labelledby="privacy-summary-title">
+        <div class="mx-auto max-w-7xl">
+          <h2 id="privacy-summary-title" class="text-3xl font-semibold tracking-normal sm:text-4xl">Plain-language summary</h2>
+          <div class="mt-8 grid gap-4 lg:grid-cols-3">
+            <For each={privacySummaryCards}>
+              {(card) => (
+                <section class="rounded-lg border border-ink/10 bg-white/62 p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.045]">
+                  <h3 class="text-xl font-semibold">{card.title}</h3>
+                  <p class="mt-4 text-base leading-7 text-ink/68 dark:text-paper/66">{card.body}</p>
+                </section>
+              )}
+            </For>
+          </div>
+        </div>
+      </section>
+
+      <section class="px-5 py-20 sm:px-8 lg:px-10" aria-labelledby="privacy-data-title">
+        <div class="mx-auto max-w-7xl">
+          <div class="max-w-3xl">
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Data handling</p>
+            <h2 id="privacy-data-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
+              What Kairo accesses, uses, and stores.
+            </h2>
+          </div>
+
+          <div class="mt-10 overflow-hidden rounded-lg border border-ink/10 bg-white/54 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+            <For each={privacyDataRows}>
+              {(row) => (
+                <section class="grid gap-5 border-b border-ink/10 p-5 last:border-b-0 dark:border-white/10 lg:grid-cols-[0.72fr_1fr_1fr_1fr] lg:p-6">
+                  <h3 class="text-xl font-semibold tracking-normal">{row.title}</h3>
+                  <PrivacyDataColumn label="Accessed or stored" body={row.access} />
+                  <PrivacyDataColumn label="Used for" body={row.purpose} />
+                  <PrivacyDataColumn label="Handled by" body={row.handling} />
+                </section>
+              )}
+            </For>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-ink/10 px-5 py-20 dark:border-white/10 sm:px-8 lg:px-10" aria-labelledby="privacy-details-title">
+        <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.76fr_1.24fr]">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Policy details</p>
+            <h2 id="privacy-details-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
+              Google Play privacy disclosures for Kairo.
+            </h2>
+          </div>
+          <div class="space-y-4">
+            <For each={privacySections}>
+              {(section) => (
+                <section class="rounded-lg border border-ink/10 bg-white/58 p-6 dark:border-white/10 dark:bg-white/[0.04]">
+                  <h3 class="text-2xl font-semibold tracking-normal">{section.title}</h3>
+                  <div class="mt-5 space-y-4">
+                    <For each={section.paragraphs}>
+                      {(paragraph) => <p class="text-base leading-7 text-ink/68 dark:text-paper/66">{paragraph}</p>}
+                    </For>
+                  </div>
+                </section>
+              )}
+            </For>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-ink/10 bg-veil/42 px-5 py-16 dark:border-white/10 dark:bg-white/[0.03] sm:px-8 lg:px-10" aria-labelledby="privacy-contact-title">
+        <div class="mx-auto flex max-w-7xl flex-col justify-between gap-8 md:flex-row md:items-center">
+          <div class="max-w-2xl">
+            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Privacy contact</p>
+            <h2 id="privacy-contact-title" class="mt-4 text-3xl font-semibold tracking-normal sm:text-4xl">
+              Questions or deletion requests
+            </h2>
+            <p class="mt-5 text-base leading-7 text-ink/68 dark:text-paper/66">
+              For privacy questions, support inquiries, or deletion requests related to information you have sent directly by email, contact the Kairo privacy address.
+            </p>
+          </div>
+          <a
+            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-moss px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-ink dark:bg-white/10 dark:text-paper dark:hover:bg-white/[0.15]"
+            href="mailto:kairoapp@proton.me"
+          >
+            Contact privacy
+            <Icon name="arrowRight" size={15} />
+          </a>
+        </div>
+      </section>
+
+      <script type="application/ld+json">{JSON.stringify(privacyStructuredData)}</script>
+    </main>
+  );
+}
+
+function PrivacyDataColumn(props: { label: string; body: string }) {
+  return (
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">{props.label}</p>
+      <p class="mt-3 text-sm leading-6 text-ink/66 dark:text-paper/64">{props.body}</p>
+    </div>
+  );
+}
+
 function intentPageStructuredData(page: SeoPage) {
   return {
     "@context": "https://schema.org",
@@ -579,6 +832,7 @@ function Footer(props: { isHome: boolean }) {
           <a class="hover:text-ember" href={sectionHref("#technical")}>Technical</a>
           <a class="hover:text-ember" href={sectionHref("#coverage")}>Guides</a>
           <a class="hover:text-ember" href={sectionHref("#faq")}>FAQ</a>
+          <a class="hover:text-ember" href="/privacy-policy/">Privacy</a>
           <a class="inline-flex items-center gap-1.5 hover:text-ember" href="https://github.com/Steadyx/Kairo" rel="noreferrer" target="_blank">
             <Icon name="github" size={15} />
             GitHub
