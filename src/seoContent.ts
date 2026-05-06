@@ -17,6 +17,13 @@ export type SeoPage = {
   related: readonly string[];
 };
 
+export type SeoRoute = {
+  path: string;
+  title: string;
+  description: string;
+  keywords: string | readonly string[];
+};
+
 export const homeSeo = {
   path: "/",
   title: "Kairo | RSVP Reading App for Android",
@@ -24,6 +31,14 @@ export const homeSeo = {
     "Kairo is an RSVP reading app for Android with calm speed reading, EPUB and MOBI import, ORP highlighting, adaptive pacing, bookmarks, and low-distraction focus reading.",
   keywords:
     "RSVP reading app, Android RSVP reader, speed reading app, calm reader, focus reading, EPUB speed reading, MOBI reader, ORP highlighting",
+};
+
+export const privacyPolicySeo: SeoRoute = {
+  path: "/privacy-policy/",
+  title: "Privacy Policy | Kairo RSVP Reader",
+  description:
+    "Privacy Policy for Kairo, an Android RSVP reading app. Learn how Kairo handles imported books, reading progress, bookmarks, preferences, backups, and privacy inquiries.",
+  keywords: ["Kairo privacy policy", "Kairo RSVP Reader privacy", "Android reading app privacy", "Google Play privacy policy"],
 };
 
 export const seoPages: readonly SeoPage[] = [
@@ -215,7 +230,7 @@ export const seoPages: readonly SeoPage[] = [
   },
 ];
 
-export const allSeoRoutes = [homeSeo, ...seoPages] as const;
+export const allSeoRoutes: readonly SeoRoute[] = [homeSeo, ...seoPages, privacyPolicySeo];
 
 export function normalizePath(path: string) {
   const cleanPath = (path.split(/[?#]/)[0] || "/").trim();
@@ -230,6 +245,10 @@ export function seoPageForPath(path: string) {
   return seoPages.find((page) => page.path === normalized);
 }
 
+export function privacyPolicyForPath(path: string) {
+  return normalizePath(path) === privacyPolicySeo.path ? privacyPolicySeo : undefined;
+}
+
 export function seoForPath(path: string) {
-  return seoPageForPath(path) ?? homeSeo;
+  return privacyPolicyForPath(path) ?? seoPageForPath(path) ?? homeSeo;
 }
