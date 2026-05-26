@@ -3,6 +3,10 @@ import { privacyPolicyForPath, seoPageForPath, seoPages, siteOrigin, type SeoPag
 
 type Theme = "light" | "dark";
 
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.kairo.reader";
+const buyMeCoffeeUrl = "https://buymeacoffee.com/kairoapp";
+const githubUrl = "https://github.com/Steadyx/Kairo";
+
 const features = [
   {
     eyebrow: "Import",
@@ -102,7 +106,7 @@ const faqItems = [
   {
     question: "Is Kairo available on Google Play?",
     answer:
-      "Kairo is coming soon to Google Play. The Android project is available on GitHub while the release is prepared.",
+      "Yes. Kairo is available on Google Play, and the Android project remains available on GitHub for readers and contributors who want to inspect or improve the app.",
   },
 ] as const;
 
@@ -833,9 +837,17 @@ function Footer(props: { isHome: boolean }) {
           <a class="hover:text-ember" href={sectionHref("#coverage")}>Guides</a>
           <a class="hover:text-ember" href={sectionHref("#faq")}>FAQ</a>
           <a class="hover:text-ember" href="/privacy-policy/">Privacy</a>
-          <a class="inline-flex items-center gap-1.5 hover:text-ember" href="https://github.com/Steadyx/Kairo" rel="noreferrer" target="_blank">
+          <a class="inline-flex items-center gap-1.5 hover:text-ember" href={playStoreUrl} rel="noreferrer" target="_blank">
+            <Icon name="play" size={15} fill="currentColor" strokeWidth={0} />
+            Google Play
+          </a>
+          <a class="inline-flex items-center gap-1.5 hover:text-ember" href={githubUrl} rel="noreferrer" target="_blank">
             <Icon name="github" size={15} />
             GitHub
+          </a>
+          <a class="inline-flex items-center gap-1.5 hover:text-ember" href={buyMeCoffeeUrl} rel="noreferrer" target="_blank">
+            <Icon name="coffee" size={15} />
+            Support
           </a>
         </div>
       </div>
@@ -879,24 +891,25 @@ function HeroActions() {
   return (
     <div class="mt-10 max-w-2xl">
       <div class="grid gap-3 sm:grid-cols-2">
-        <button
-          type="button"
-          disabled
-          class="inline-flex min-h-[68px] w-full cursor-default items-center gap-3 rounded-lg bg-[#111] px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition dark:bg-paper dark:text-ink dark:ring-white/10"
-          aria-label="Kairo is coming soon on Google Play"
+        <a
+          class="inline-flex min-h-[68px] w-full items-center gap-3 rounded-lg bg-[#111] px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:bg-moss dark:bg-paper dark:text-ink dark:ring-white/10 dark:hover:bg-veil"
+          href={playStoreUrl}
+          rel="noreferrer"
+          target="_blank"
+          aria-label="Get Kairo on Google Play"
         >
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white text-[#111] dark:bg-ink dark:text-paper">
             <Icon name="play" size={21} fill="currentColor" strokeWidth={0} class="ml-0.5" />
           </span>
           <span class="min-w-0">
-            <span class="block text-[0.65rem] font-semibold uppercase leading-none tracking-[0.14em] opacity-72">Coming soon on</span>
+            <span class="block text-[0.65rem] font-semibold uppercase leading-none tracking-[0.14em] opacity-72">Get it on</span>
             <span class="mt-1 block text-lg font-semibold leading-none">Google Play</span>
           </span>
-        </button>
+        </a>
 
         <a
           class="inline-flex min-h-[68px] w-full items-center gap-3 rounded-lg border border-moss/30 bg-moss px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:bg-ink dark:border-white/10 dark:bg-white/10 dark:text-paper dark:hover:bg-white/[0.15]"
-          href="https://github.com/Steadyx/Kairo"
+          href={githubUrl}
           rel="noreferrer"
           target="_blank"
           aria-label="Contribute to Kairo on GitHub"
@@ -926,13 +939,15 @@ function HeroActions() {
           <Icon name="layers" size={15} />
           Technical notes
         </a>
-        <span
-          aria-disabled="true"
-          class="inline-flex cursor-default items-center gap-2 rounded-full border border-[#191611]/10 bg-[#ffdd00] px-4 py-2 text-sm font-semibold text-[#191611] shadow-sm ring-1 ring-white/35"
+        <a
+          class="inline-flex items-center gap-2 rounded-full border border-[#191611]/10 bg-[#ffdd00] px-4 py-2 text-sm font-semibold text-[#191611] shadow-sm ring-1 ring-white/35 transition hover:-translate-y-0.5 hover:bg-[#f6d700]"
+          href={buyMeCoffeeUrl}
+          rel="noreferrer"
+          target="_blank"
         >
           <Icon name="coffee" size={15} />
           Buy me a coffee
-        </span>
+        </a>
       </div>
     </div>
   );
