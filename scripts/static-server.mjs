@@ -26,6 +26,9 @@ function resolveRequestPath(url) {
   const requested = normalize(decodeURIComponent(parsed.pathname)).replace(/^(\.\.[/\\])+/, "");
   const filePath = join(root, requested);
   if (!filePath.startsWith(root)) return join(root, "index.html");
+  if (!requested.endsWith("/") && existsSync(join(filePath, "index.html"))) {
+    return { redirectTo: `${requested}/${parsed.search}` };
+  }
   if (existsSync(filePath) && statSync(filePath).isFile()) return filePath;
   if (existsSync(join(filePath, "index.html"))) return join(filePath, "index.html");
   return join(root, "index.html");
@@ -33,6 +36,12 @@ function resolveRequestPath(url) {
 
 createServer((request, response) => {
   const filePath = resolveRequestPath(request.url);
+  if (typeof filePath === "object") {
+    response.writeHead(308, { Location: filePath.redirectTo });
+    response.end();
+    return;
+  }
+
   const extension = extname(filePath);
   response.setHeader("Content-Type", contentTypes[extension] ?? "application/octet-stream");
   response.setHeader("X-Content-Type-Options", "nosniff");

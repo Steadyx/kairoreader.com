@@ -1,5 +1,5 @@
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import { privacyPolicyForPath, seoPageForPath, seoPages, siteOrigin, type SeoPage } from "./seoContent";
+import { canonicalUrlForPath, privacyPolicyForPath, privacyPolicySeo, seoForPath, seoPageForPath, seoPages, siteOrigin, type SeoPage, type SeoRoute } from "./seoContent";
 
 type Theme = "light" | "dark";
 
@@ -217,8 +217,16 @@ function App(props: { initialPath?: string } = {}) {
   const [theme, setTheme] = createSignal<Theme>("dark");
   const [activeFeature, setActiveFeature] = createSignal(0);
   const routePath = props.initialPath ?? (typeof window === "undefined" ? "/" : window.location.pathname);
+  const routeSeo = seoForPath(routePath);
+  const routeCanonicalUrl = canonicalUrlForPath(routeSeo.path);
   const privacyPage = privacyPolicyForPath(routePath);
   const intentPage = seoPageForPath(routePath);
+
+  createEffect(() => {
+    if (typeof document === "undefined") return;
+
+    syncPageMetadata(routeSeo, routeCanonicalUrl);
+  });
 
   onMount(() => {
     let storedTheme: Theme | null = null;
@@ -515,6 +523,29 @@ function App(props: { initialPath?: string } = {}) {
   );
 }
 
+function syncPageMetadata(route: SeoRoute, canonicalUrl: string) {
+  document.title = route.title;
+  setMetaContent("name", "description", route.description);
+  setMetaContent("name", "keywords", keywordText(route.keywords));
+  setMetaContent("property", "og:title", route.title);
+  setMetaContent("property", "og:description", route.description);
+  setMetaContent("property", "og:url", canonicalUrl);
+  setMetaContent("name", "twitter:title", route.title);
+  setMetaContent("name", "twitter:description", route.description);
+
+  const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (canonical) canonical.href = canonicalUrl;
+}
+
+function setMetaContent(attribute: "name" | "property", value: string, content: string) {
+  const element = document.querySelector<HTMLMetaElement>(`meta[${attribute}="${value}"]`);
+  if (element) element.content = content;
+}
+
+function keywordText(keywords: SeoRoute["keywords"]) {
+  return typeof keywords === "string" ? keywords : keywords.join(", ");
+}
+
 function CoverageSection() {
   return (
     <section id="coverage" class="border-t border-ink/10 px-5 pb-28 pt-24 dark:border-white/10 sm:px-8 lg:px-10" aria-labelledby="coverage-title">
@@ -653,8 +684,9 @@ function PrivacyPolicyPage() {
     "@type": "WebPage",
     "@id": `${siteOrigin}/privacy-policy/#privacy-policy`,
     url: `${siteOrigin}/privacy-policy/`,
-    name: "Privacy Policy | Kairo RSVP Reader",
-    dateModified: "2026-05-06",
+    name: privacyPolicySeo.title,
+    description: privacyPolicySeo.description,
+    dateModified: "2026-05-27",
     publisher: {
       "@type": "Person",
       name: "Edward Kemp",

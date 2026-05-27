@@ -26,18 +26,18 @@ export type SeoRoute = {
 
 export const homeSeo = {
   path: "/",
-  title: "Kairo | RSVP Reading App for Android",
+  title: "Kairo RSVP Reader for Android EPUB and MOBI Books",
   description:
-    "Kairo is an RSVP reading app for Android with calm speed reading, EPUB and MOBI import, ORP highlighting, adaptive pacing, bookmarks, and low-distraction focus reading.",
+    "Kairo is an Android RSVP reader for EPUB and MOBI books, with calm speed reading, ORP highlighting, bookmarks, and adaptive pacing.",
   keywords:
     "RSVP reading app, Android RSVP reader, speed reading app, calm reader, focus reading, EPUB speed reading, MOBI reader, ORP highlighting",
 };
 
 export const privacyPolicySeo: SeoRoute = {
   path: "/privacy-policy/",
-  title: "Privacy Policy | Kairo RSVP Reader",
+  title: "Kairo Privacy Policy for Android RSVP Reader and Book Imports",
   description:
-    "Privacy Policy for Kairo, an Android RSVP reading app. Learn how Kairo handles imported books, reading progress, bookmarks, preferences, backups, and privacy inquiries.",
+    "Read Kairo's privacy policy for Android book imports, local reading progress, backups, privacy inquiries, and Google Play requirements.",
   keywords: ["Kairo privacy policy", "Kairo RSVP Reader privacy", "Android reading app privacy", "Google Play privacy policy"],
 };
 
@@ -46,9 +46,9 @@ export const seoPages: readonly SeoPage[] = [
     path: "/rsvp-reading-app/",
     navLabel: "RSVP reading app",
     eyebrow: "RSVP reading app",
-    title: "RSVP Reading App for Android | Kairo",
+    title: "RSVP Reading App for Android EPUB and MOBI Books | Kairo",
     description:
-      "Kairo is an RSVP reading app for Android that turns EPUB and MOBI books into calm word-by-word speed reading sessions with ORP highlighting and adaptive pacing.",
+      "Kairo turns EPUB and MOBI books into calm RSVP reading sessions on Android, with ORP highlighting, adaptive pacing, bookmarks, and progress.",
     heading: "RSVP reading app for Android books.",
     summary:
       "Kairo is built around Rapid Serial Visual Presentation, so RSVP reading is not a hidden bonus mode. It is the main reading flow for people who want focused speed reading from their own ebooks.",
@@ -77,9 +77,9 @@ export const seoPages: readonly SeoPage[] = [
     path: "/android-rsvp-reader/",
     navLabel: "Android RSVP reader",
     eyebrow: "Android reader",
-    title: "Android RSVP Reader for EPUB and MOBI Books | Kairo",
+    title: "Android RSVP Reader for EPUB, MOBI, and Focus | Kairo",
     description:
-      "Use Kairo as an Android RSVP reader for DRM-free EPUB and MOBI books with local reading progress, bookmarks, focus mode, and calm speed reading profiles.",
+      "Use Kairo as an Android RSVP reader for DRM-free EPUB and MOBI books, with local progress, bookmarks, focus mode, and calm profiles.",
     heading: "An Android RSVP reader for your own books.",
     summary:
       "Kairo combines an Android ebook reader with an RSVP reader, giving you a normal reading surface and a focused word-by-word mode in one local-first app.",
@@ -108,9 +108,9 @@ export const seoPages: readonly SeoPage[] = [
     path: "/epub-speed-reading-app/",
     navLabel: "EPUB speed reading",
     eyebrow: "EPUB speed reading",
-    title: "EPUB Speed Reading App for Android | Kairo",
+    title: "EPUB Speed Reading App for Android Books | Kairo",
     description:
-      "Kairo is an EPUB speed reading app for Android that imports DRM-free books and turns chapters into calm RSVP reading sessions with adaptive pacing.",
+      "Speed read DRM-free EPUB books on Android with Kairo's RSVP mode, adaptive pacing, chapter context, bookmarks, and reading profiles.",
     heading: "Speed read EPUB books with RSVP pacing.",
     summary:
       "Kairo gives EPUB readers a focused speed reading path without giving up normal chapter navigation, progress, bookmarks, and reading context.",
@@ -139,9 +139,9 @@ export const seoPages: readonly SeoPage[] = [
     path: "/orp-highlighting/",
     navLabel: "ORP highlighting",
     eyebrow: "ORP highlighting",
-    title: "ORP Highlighting for RSVP Reading | Kairo",
+    title: "ORP Highlighting for Calm RSVP Speed Reading | Kairo",
     description:
-      "Kairo uses ORP highlighting and guide controls to keep RSVP reading visually anchored around the optimal recognition point for calmer speed reading.",
+      "Kairo uses ORP highlighting to anchor words around the optimal recognition point, making RSVP speed reading calmer and easier to follow.",
     heading: "ORP highlighting for steadier RSVP reading.",
     summary:
       "Optimal Recognition Point guidance helps keep your eyes anchored while words change. Kairo uses that idea as part of a calmer RSVP reading system.",
@@ -170,9 +170,9 @@ export const seoPages: readonly SeoPage[] = [
     path: "/calm-speed-reading-app/",
     navLabel: "Calm speed reading",
     eyebrow: "Calm speed reading",
-    title: "Calm Speed Reading App for Focused Reading | Kairo",
+    title: "Calm Speed Reading App for Focused Android Reading | Kairo",
     description:
-      "Kairo is a calm speed reading app for Android, built for focused RSVP reading with low-glare themes, adaptive pacing, ORP guidance, and reader profiles.",
+      "Kairo is a calm Android speed reading app with RSVP mode, low-glare themes, ORP guidance, adaptive pacing, and focused reader profiles.",
     heading: "A calm speed reading app for focused sessions.",
     summary:
       "Kairo is designed for readers who want to move faster without making the screen feel rushed, noisy, or visually exhausting.",
@@ -201,9 +201,9 @@ export const seoPages: readonly SeoPage[] = [
     path: "/mobi-epub-reader-android/",
     navLabel: "MOBI and EPUB",
     eyebrow: "Book formats",
-    title: "MOBI and EPUB Reader for Android with RSVP | Kairo",
+    title: "MOBI and EPUB Reader for Android with RSVP Speed Reading | Kairo",
     description:
-      "Kairo is a MOBI and EPUB reader for Android with RSVP speed reading, local progress, bookmarks, ORP highlighting, and adaptive pacing.",
+      "Read DRM-free MOBI and EPUB books on Android with Kairo, then switch into RSVP speed reading with bookmarks, progress, and ORP guidance.",
     heading: "A MOBI and EPUB reader with RSVP mode.",
     summary:
       "Kairo is for readers with their own DRM-free ebook files who want one Android app for normal reading and focused RSVP speed reading.",
@@ -251,4 +251,8 @@ export function privacyPolicyForPath(path: string) {
 
 export function seoForPath(path: string) {
   return privacyPolicyForPath(path) ?? seoPageForPath(path) ?? homeSeo;
+}
+
+export function canonicalUrlForPath(path: string) {
+  return `${siteOrigin}${normalizePath(path)}`;
 }

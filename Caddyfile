@@ -9,6 +9,10 @@ www.{$SITE_DOMAIN} {
 {$SITE_DOMAIN} {
 	root * /srv
 	encode zstd gzip
+
+	@slashlessPages path /rsvp-reading-app /android-rsvp-reader /epub-speed-reading-app /orp-highlighting /calm-speed-reading-app /mobi-epub-reader-android /privacy-policy
+	redir @slashlessPages {http.request.uri.path}/ permanent
+
 	try_files {path} /index.html
 	file_server
 

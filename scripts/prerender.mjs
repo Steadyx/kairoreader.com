@@ -48,7 +48,12 @@ function withPageMetadata(pageHtml, route) {
       /<meta\s+property="og:description"\s+content="[^"]*"\s*\/>/s,
       `<meta\n      property="og:description"\n      content="${escapeAttribute(route.description)}"\n    />`,
     )
-    .replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/>/s, `<meta property="og:url" content="${url}" />`);
+    .replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/>/s, `<meta property="og:url" content="${url}" />`)
+    .replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/>/s, `<meta name="twitter:title" content="${escapeAttribute(route.title)}" />`)
+    .replace(
+      /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/>/s,
+      `<meta\n      name="twitter:description"\n      content="${escapeAttribute(route.description)}"\n    />`,
+    );
 }
 
 function escapeAttribute(value) {
