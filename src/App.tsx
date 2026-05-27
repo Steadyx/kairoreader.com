@@ -1,11 +1,12 @@
-import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import { canonicalUrlForPath, privacyPolicyForPath, privacyPolicySeo, seoForPath, seoPageForPath, seoPages, siteOrigin, type SeoPage, type SeoRoute } from "./seoContent";
+import { For, Match, Show, Switch, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { allSeoRoutes, canonicalUrlForPath, normalizePath, privacyPolicyForPath, privacyPolicySeo, seoForPath, seoPageForPath, seoPages, siteOrigin, type SeoPage, type SeoRoute } from "./seoContent";
 
 type Theme = "light" | "dark";
 
 const playStoreUrl = "https://play.google.com/store/apps/details?id=com.kairo.reader";
 const buyMeCoffeeUrl = "https://buymeacoffee.com/kairoapp";
 const githubUrl = "https://github.com/Steadyx/Kairo";
+const appRoutePaths = new Set(allSeoRoutes.map((route) => route.path));
 
 const features = [
   {
@@ -216,19 +217,64 @@ const privacySections = [
 function App(props: { initialPath?: string } = {}) {
   const [theme, setTheme] = createSignal<Theme>("dark");
   const [activeFeature, setActiveFeature] = createSignal(0);
-  const routePath = props.initialPath ?? (typeof window === "undefined" ? "/" : window.location.pathname);
-  const routeSeo = seoForPath(routePath);
-  const routeCanonicalUrl = canonicalUrlForPath(routeSeo.path);
-  const privacyPage = privacyPolicyForPath(routePath);
-  const intentPage = seoPageForPath(routePath);
+  const initialRoutePath = normalizePath(props.initialPath ?? (typeof window === "undefined" ? "/" : window.location.pathname));
+  const [routePath, setRoutePath] = createSignal(initialRoutePath);
+  const routeSeo = createMemo(() => seoForPath(routePath()));
+  const routeCanonicalUrl = createMemo(() => canonicalUrlForPath(routeSeo().path));
+  const privacyPage = createMemo(() => privacyPolicyForPath(routePath()));
+  const intentPage = createMemo(() => seoPageForPath(routePath()));
+  const isHomeRoute = createMemo(() => !privacyPage() && !intentPage());
 
   createEffect(() => {
     if (typeof document === "undefined") return;
 
-    syncPageMetadata(routeSeo, routeCanonicalUrl);
+    syncPageMetadata(routeSeo(), routeCanonicalUrl());
   });
 
   onMount(() => {
+    const navigateTo = (url: URL, action: "push" | "replace" = "push") => {
+      const nextPath = appPathFor(url.pathname);
+      if (!nextPath) return false;
+
+      const nextUrl = `${nextPath}${url.hash}`;
+      const currentUrl = `${normalizePath(window.location.pathname)}${window.location.hash}`;
+
+      if (nextUrl !== currentUrl) {
+        window.history[action === "replace" ? "replaceState" : "pushState"]({}, "", nextUrl);
+      }
+
+      setRoutePath(nextPath);
+      scrollToRouteTarget(url.hash);
+      return true;
+    };
+
+    const handleClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (!(event.target instanceof Element)) return;
+
+      const anchor = event.target.closest<HTMLAnchorElement>("a[href]");
+      if (!anchor || anchor.hasAttribute("download")) return;
+      if (anchor.target && anchor.target !== "_self") return;
+
+      const href = anchor.getAttribute("href");
+      if (!href || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+
+      const url = new URL(anchor.href);
+      if (url.origin !== window.location.origin || !appPathFor(url.pathname)) return;
+
+      event.preventDefault();
+      navigateTo(url);
+    };
+
+    const handlePopState = () => {
+      const nextPath = appPathFor(window.location.pathname) ?? "/";
+      setRoutePath(nextPath);
+      scrollToRouteTarget(window.location.hash);
+    };
+
+    window.addEventListener("click", handleClick);
+    window.addEventListener("popstate", handlePopState);
+
     let storedTheme: Theme | null = null;
 
     try {
@@ -252,7 +298,11 @@ function App(props: { initialPath?: string } = {}) {
 
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    onCleanup(() => window.removeEventListener("scroll", handleScroll));
+    onCleanup(() => {
+      window.removeEventListener("click", handleClick);
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("scroll", handleScroll);
+    });
   });
 
   const isDark = createMemo(() => theme() === "dark");
@@ -281,30 +331,12 @@ function App(props: { initialPath?: string } = {}) {
     }
   };
 
-  if (privacyPage) {
-    return (
-      <div class="min-h-screen bg-paper text-ink antialiased transition-colors duration-500 dark:bg-ink dark:text-paper">
-        <Header isDark={isDark()} isHome={false} onToggleTheme={toggleTheme} />
-        <PrivacyPolicyPage />
-        <Footer isHome={false} />
-      </div>
-    );
-  }
-
-  if (intentPage) {
-    return (
-      <div class="min-h-screen bg-paper text-ink antialiased transition-colors duration-500 dark:bg-ink dark:text-paper">
-        <Header isDark={isDark()} isHome={false} onToggleTheme={toggleTheme} />
-        <IntentPage page={intentPage} />
-        <Footer isHome={false} />
-      </div>
-    );
-  }
-
   return (
     <div class="min-h-screen bg-paper text-ink antialiased transition-colors duration-500 dark:bg-ink dark:text-paper">
-      <Header isDark={isDark()} isHome={true} onToggleTheme={toggleTheme} />
-      <main>
+      <Header isDark={isDark()} isHome={isHomeRoute()} onToggleTheme={toggleTheme} />
+      <Switch
+        fallback={
+          <main>
         <section class="relative isolate overflow-hidden px-5 pt-24 sm:px-8 lg:px-10" aria-labelledby="hero-title">
           <div class="absolute inset-0 -z-20 bg-paper dark:bg-ink" />
 
@@ -516,11 +548,48 @@ function App(props: { initialPath?: string } = {}) {
 
           <script type="application/ld+json">{JSON.stringify(faqStructuredData)}</script>
         </section>
-      </main>
+          </main>
+        }
+      >
+        <Match when={privacyPage()}>
+          <PrivacyPolicyPage />
+        </Match>
+        <Match when={intentPage()} keyed>
+          {(page) => <IntentPage page={page} />}
+        </Match>
+      </Switch>
 
-      <Footer isHome={true} />
+      <Footer isHome={isHomeRoute()} />
     </div>
   );
+}
+
+function appPathFor(pathname: string) {
+  const normalizedPath = normalizePath(pathname);
+
+  return appRoutePaths.has(normalizedPath) ? normalizedPath : undefined;
+}
+
+function scrollToRouteTarget(hash: string) {
+  window.requestAnimationFrame(() => {
+    if (!hash) {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      return;
+    }
+
+    const target = elementForHash(hash);
+    if (target) target.scrollIntoView({ block: "start", behavior: "auto" });
+  });
+}
+
+function elementForHash(hash: string) {
+  const rawId = hash.slice(1);
+
+  try {
+    return document.getElementById(decodeURIComponent(rawId));
+  } catch {
+    return document.getElementById(rawId);
+  }
 }
 
 function syncPageMetadata(route: SeoRoute, canonicalUrl: string) {
