@@ -1,249 +1,144 @@
-import { For, Match, Show, Switch, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import { allSeoRoutes, canonicalUrlForPath, normalizePath, privacyPolicyForPath, privacyPolicySeo, seoForPath, seoPageForPath, seoPages, siteOrigin, type SeoPage, type SeoRoute } from "./seoContent";
+import { For, Match, Switch, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import {
+  allSeoRoutes,
+  canonicalUrlForPath,
+  normalizePath,
+  privacyPolicyForPath,
+  seoForPath,
+  seoPageForPath,
+  seoPages,
+  siteOrigin,
+  type SeoPage,
+  type SeoRoute,
+} from "./seoContent";
 
 type Theme = "light" | "dark";
+type IconName =
+  | "arrow"
+  | "book"
+  | "check"
+  | "coffee"
+  | "focus"
+  | "github"
+  | "menu"
+  | "moon"
+  | "play"
+  | "shield"
+  | "sun"
+  | "timer"
+  | "x";
 
 const playStoreUrl = "https://play.google.com/store/apps/details?id=com.kairo.reader";
-const buyMeCoffeeUrl = "https://buymeacoffee.com/kairoapp";
 const githubUrl = "https://github.com/Steadyx/Kairo";
+const coffeeUrl = "https://buymeacoffee.com/kairoapp";
+const supportEmail = "kairoapp@proton.me";
 const appRoutePaths = new Set(allSeoRoutes.map((route) => route.path));
 
-const features = [
-  {
-    eyebrow: "Import",
-    title: "Bring your own books",
-    body: "Kairo imports DRM-free EPUB and MOBI files from Android storage, extracts metadata and covers, then keeps the library local.",
-    metric: "EPUB + MOBI",
-  },
-  {
-    eyebrow: "Reader",
-    title: "Scroll when you want context",
-    body: "A quiet long-form reader gives chapter navigation, page-aware progress, bookmarks, images, and a clean handoff into RSVP.",
-    metric: "Resume state",
-  },
-  {
-    eyebrow: "RSVP",
-    title: "Accelerate without visual noise",
-    body: "Words stay anchored around the optimal recognition point, with adaptive timing for length, syllables, punctuation, clauses, and long words.",
-    metric: "ORP guided",
-  },
-  {
-    eyebrow: "Control",
-    title: "Profiles for different kinds of reading",
-    body: "Balanced, Chill, Narrative, Focus, Flow, Sprint, and Study profiles make speed reading feel tuned rather than forced.",
-    metric: "7 profiles",
-  },
-  {
-    eyebrow: "Focus",
-    title: "Low-distraction by design",
-    body: "Focus mode, brightness controls, typography, low-glare themes, and persistent preferences keep the session calm.",
-    metric: "Local prefs",
-  },
-];
+const formats = [
+  ["EPUB", "Ebook"],
+  ["MOBI", "Ebook"],
+  ["PRC", "Ebook"],
+  ["AZW", "Ebook"],
+  ["FB2", "Ebook"],
+  ["PDF", "Document"],
+  ["DOCX", "Document"],
+  ["TXT", "Text"],
+  ["Markdown", "Text"],
+  ["HTML", "Text"],
+] as const;
 
-const technicalDetails = [
-  "Kotlin 2.1 Android app",
-  "Jetpack Compose UI",
-  "Room + DataStore persistence",
-  "EPUB spine and MOBI parsing",
-  "Language-aware tokenization",
-  "CJK and RTL foundations",
-  "ORP guide controls",
-  "Page and paragraph pause shaping",
-];
-
-const profiles = [
-  ["Balanced", "Natural cadence with clear punctuation breathing"],
-  ["Chill", "Slow, spacious pacing for relaxed reading"],
-  ["Narrative", "Expressive flow for fiction and inner voice"],
-  ["Focus", "Sharper rhythm without dropping punctuation cues"],
-  ["Flow", "Continuous mid-fast movement with smooth transitions"],
-  ["Sprint", "Very fast, with readable pause structure"],
-  ["Study", "Deliberate timing for dense material"],
-];
-
-const keywords = [
-  "RSVP reading app",
-  "RSVP reading",
-  "Android RSVP reader",
-  "speed reading",
-  "speed reading app",
-  "calm reader",
-  "calm speed reading",
-  "focus reading",
-  "Android ebook reader",
-  "ORP highlighting",
-  "EPUB speed reading",
-  "EPUB reader",
-  "MOBI reader",
-];
+const profiles = ["Balanced", "Chill", "Narrative", "Focus", "Flow", "Sprint", "Study"];
 
 const faqItems = [
   {
-    question: "What is RSVP reading?",
+    question: "What is Kairo?",
     answer:
-      "RSVP reading shows one word or short text unit at a fixed point, reducing eye movement. Kairo uses RSVP as its main reading mode and shapes timing around punctuation, word length, and sentence flow so speed reading feels calmer.",
+      "Kairo is a free Android reading app for your own DRM-free ebooks and documents. It combines a normal reader with adaptive RSVP and Bionic Reading modes, while keeping books, progress and preferences on your device.",
   },
   {
-    question: "Is Kairo a speed reading app or an ebook reader?",
+    question: "Which file formats does Kairo support?",
     answer:
-      "Kairo is both. It combines a quiet Android ebook reader with an RSVP speed reading mode, so you can import a book, read with normal context, and launch focused word-by-word reading from the same position.",
+      "Kairo 1.1 supports EPUB, MOBI, PRC, AZW, FB2 and FB2.ZIP ebooks; DOCX and text-based PDF documents; and TXT, Markdown, HTML and HTM text files.",
   },
   {
-    question: "Can Kairo import EPUB and MOBI books?",
+    question: "What is the difference between RSVP and Bionic Reading?",
     answer:
-      "Yes. Kairo imports DRM-free EPUB and MOBI files from Android storage, extracts chapters, metadata, and covers where available, and keeps reading progress on the device.",
+      "RSVP keeps your eyes at one focal point while words or short phrases change. Bionic Reading shows larger timed chunks and emphasises word beginnings, giving you more surrounding context. Kairo lets you choose either from the same reading position.",
   },
   {
-    question: "Does Kairo use ORP highlighting?",
+    question: "Does Kairo upload my books or track my reading?",
     answer:
-      "Yes. Kairo anchors words around the optimal recognition point and can show ORP guidance so your eyes have a consistent focus point during RSVP reading.",
+      "No. Imported content, bookmarks, progress and reader preferences stay in app-private storage. Kairo has no accounts, ads or analytics SDKs. Internet access is used for Google Play's in-app update flow, not to send your reading data to a Kairo server.",
   },
   {
-    question: "How does Kairo keep speed reading calm?",
+    question: "Can Kairo read scanned PDFs or protected ebooks?",
     answer:
-      "Kairo uses adaptive pacing, low-glare themes, focus mode, bookmarks, persistent reader settings, and RSVP profiles for different reading rhythms. The goal is controlled reading momentum rather than frantic word flashing.",
+      "Not currently. PDFs need selectable text, because Kairo does not perform OCR. Vendor-locked or DRM-protected ebooks are also outside the current parser pipeline.",
   },
   {
-    question: "Is Kairo available on Google Play?",
-    answer:
-      "Yes. Kairo is available on Google Play, and the Android project remains available on GitHub for readers and contributors who want to inspect or improve the app.",
+    question: "What version of Android is required?",
+    answer: "Kairo supports Android 7.0 (API 24) and newer and is available free on Google Play.",
   },
 ] as const;
 
 const faqStructuredData = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  "@id": "https://kairoreader.com/#faq",
-  url: "https://kairoreader.com/#faq",
-  name: "Kairo RSVP Reader FAQs",
+  "@id": `${siteOrigin}/#faq`,
   mainEntity: faqItems.map((item) => ({
     "@type": "Question",
     name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
-    },
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
   })),
 };
 
-const privacyLastUpdated = "May 6, 2026";
-
-const privacySummaryCards = [
-  {
-    title: "No developer-operated collection",
-    body: "Kairo does not send imported books, reading progress, bookmarks, preferences, analytics, advertising identifiers, crash reports, or account data to a Kairo server.",
-  },
-  {
-    title: "Local reading data",
-    body: "Books you choose to import, extracted book content, covers, metadata, bookmarks, progress, and settings are stored on your device so the reader works offline.",
-  },
-  {
-    title: "No ads or tracking",
-    body: "The current Android app does not include advertising SDKs, analytics SDKs, social tracking SDKs, or third-party payment processing.",
-  },
-];
-
-const privacyDataRows = [
-  {
-    title: "User-selected ebook files",
-    access: "DRM-free EPUB and MOBI files that you import or open with Kairo.",
-    purpose: "To parse the book, show chapters, covers, images, metadata, and text, and support normal reading plus RSVP reading.",
-    handling: "Processed locally and stored in Kairo's app-private storage unless you delete the book, clear app data, or uninstall the app.",
-  },
-  {
-    title: "Reading state and preferences",
-    access: "Bookmarks, completed status, reading position, RSVP speed/profile settings, theme, typography, language, and focus preferences.",
-    purpose: "To resume your place, keep the reading experience consistent, and apply the reading controls you choose.",
-    handling: "Stored locally in the app database and preferences. Kairo does not transmit this data to the developer.",
-  },
-  {
-    title: "Notification policy access",
-    access: "Android notification policy access, only if you enable Focus Mode notification pausing and grant that Android permission.",
-    purpose: "To temporarily reduce interruptions during a focus reading session and then restore the previous interruption setting.",
-    handling: "Used on-device only. Kairo does not read notification content or send notification data anywhere.",
-  },
-  {
-    title: "Android backup",
-    access: "If Android backup is enabled for your device, Android may back up Kairo's local database and preferences to your Google account.",
-    purpose: "To support device restore using Android's system backup behavior.",
-    handling: "Handled by Android/Google backup systems. The Kairo developer does not receive or access those backups.",
-  },
-  {
-    title: "Privacy inquiries",
-    access: "Your email address and the content of messages you send to the privacy contact.",
-    purpose: "To answer privacy, support, deletion, or policy questions.",
-    handling: "Used only to respond to your inquiry and retained only as long as needed for support, legal, or abuse-prevention purposes.",
-  },
-];
-
-const privacySections = [
-  {
-    title: "Collection and sharing",
-    paragraphs: [
-      "Kairo does not operate a cloud account system and does not collect app usage data on developer-controlled servers. The current Android app does not declare the Android internet permission, and it is designed for local, offline reading.",
-      "Kairo does not sell personal data. Kairo does not share imported books, reading progress, bookmarks, preferences, device identifiers, analytics, or advertising data with third parties. The only third-party handling described in this policy is Android system behavior, such as optional device backup controlled by your Android and Google account settings.",
-    ],
-  },
-  {
-    title: "Secure handling",
-    paragraphs: [
-      "Kairo stores app data in Android app-private storage, including its local database and preferences. Android's app sandbox limits other apps' access to that storage under normal device security rules.",
-      "Because Kairo does not send your reading data to a Kairo service, there is no developer-operated transmission of imported books, reading progress, or bookmarks. If Android backup is enabled, backup transfer and storage are handled by Android/Google under your device and Google account settings.",
-    ],
-  },
-  {
-    title: "Retention and deletion",
-    paragraphs: [
-      "Imported books, extracted book content, covers, bookmarks, progress, and preferences remain on your device until you remove them. You can delete app data by deleting books in Kairo where available, clearing Kairo's app storage in Android settings, or uninstalling Kairo.",
-      "If Android backup is enabled, copies of database and preference data may remain in your Android/Google backup until removed according to your device backup settings. Kairo does not have access to those backups.",
-    ],
-  },
-  {
-    title: "Accounts and children",
-    paragraphs: [
-      "Kairo does not currently provide user accounts, sign-in, subscriptions, payments, or an external account deletion flow. If account functionality is added in the future, this policy and any required account deletion resource will be updated before release.",
-      "Kairo is not directed to children and does not knowingly collect personal information from children. If you believe a child has sent personal information through a privacy inquiry, contact the privacy address below so it can be deleted.",
-    ],
-  },
-  {
-    title: "Changes to this policy",
-    paragraphs: [
-      "This page may be updated when Kairo's app behavior, data handling, third-party services, or Google Play requirements change. The latest version will keep the effective date near the top of the page.",
-    ],
-  },
-];
-
 function App(props: { initialPath?: string } = {}) {
-  const [theme, setTheme] = createSignal<Theme>("dark");
-  const [activeFeature, setActiveFeature] = createSignal(0);
-  const initialRoutePath = normalizePath(props.initialPath ?? (typeof window === "undefined" ? "/" : window.location.pathname));
-  const [routePath, setRoutePath] = createSignal(initialRoutePath);
+  const initialPath = normalizePath(props.initialPath ?? (typeof window === "undefined" ? "/" : window.location.pathname));
+  const [routePath, setRoutePath] = createSignal(initialPath);
+  const initialTheme: Theme =
+    typeof document !== "undefined" && document.documentElement.dataset.theme === "light" ? "light" : "dark";
+  const [theme, setTheme] = createSignal<Theme>(initialTheme);
+  const [menuOpen, setMenuOpen] = createSignal(false);
   const routeSeo = createMemo(() => seoForPath(routePath()));
-  const routeCanonicalUrl = createMemo(() => canonicalUrlForPath(routeSeo().path));
   const privacyPage = createMemo(() => privacyPolicyForPath(routePath()));
   const intentPage = createMemo(() => seoPageForPath(routePath()));
-  const isHomeRoute = createMemo(() => !privacyPage() && !intentPage());
+  const isHome = createMemo(() => !privacyPage() && !intentPage());
 
   createEffect(() => {
     if (typeof document === "undefined") return;
+    syncPageMetadata(routeSeo(), canonicalUrlForPath(routeSeo().path));
+  });
 
-    syncPageMetadata(routeSeo(), routeCanonicalUrl());
+  createEffect(() => {
+    if (typeof document === "undefined") return;
+    const nextTheme = theme();
+    document.documentElement.dataset.theme = nextTheme;
+    document.documentElement.classList.toggle("dark", nextTheme === "dark");
+    document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute(
+      "content",
+      nextTheme === "dark" ? "#071011" : "#f4f6f3",
+    );
   });
 
   onMount(() => {
-    const navigateTo = (url: URL, action: "push" | "replace" = "push") => {
+    try {
+      const storedTheme = window.localStorage.getItem("kairo-theme");
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      setTheme(storedTheme === "light" || storedTheme === "dark" ? storedTheme : systemTheme);
+    } catch {
+      setTheme("dark");
+    }
+
+    const navigate = (url: URL) => {
       const nextPath = appPathFor(url.pathname);
       if (!nextPath) return false;
 
       const nextUrl = `${nextPath}${url.hash}`;
       const currentUrl = `${normalizePath(window.location.pathname)}${window.location.hash}`;
-
-      if (nextUrl !== currentUrl) {
-        window.history[action === "replace" ? "replaceState" : "pushState"]({}, "", nextUrl);
-      }
+      if (nextUrl !== currentUrl) window.history.pushState({}, "", nextUrl);
 
       setRoutePath(nextPath);
+      setMenuOpen(false);
       scrollToRouteTarget(url.hash);
       return true;
     };
@@ -251,398 +146,670 @@ function App(props: { initialPath?: string } = {}) {
     const handleClick = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       if (!(event.target instanceof Element)) return;
-
       const anchor = event.target.closest<HTMLAnchorElement>("a[href]");
-      if (!anchor || anchor.hasAttribute("download")) return;
-      if (anchor.target && anchor.target !== "_self") return;
-
+      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
       const href = anchor.getAttribute("href");
       if (!href || href.startsWith("mailto:") || href.startsWith("tel:")) return;
-
       const url = new URL(anchor.href);
-      if (url.origin !== window.location.origin || !appPathFor(url.pathname)) return;
-
-      event.preventDefault();
-      navigateTo(url);
+      if (url.origin === window.location.origin) {
+        if (url.pathname === window.location.pathname && url.hash) {
+          event.preventDefault();
+          scrollToRouteTarget(url.hash);
+          setMenuOpen(false);
+          return;
+        }
+        if (appPathFor(url.pathname)) {
+          event.preventDefault();
+          navigate(url);
+        }
+      }
     };
 
     const handlePopState = () => {
-      const nextPath = appPathFor(window.location.pathname) ?? "/";
-      setRoutePath(nextPath);
+      setRoutePath(appPathFor(window.location.pathname) ?? "/");
+      setMenuOpen(false);
       scrollToRouteTarget(window.location.hash);
     };
 
     window.addEventListener("click", handleClick);
     window.addEventListener("popstate", handlePopState);
-
-    let storedTheme: Theme | null = null;
-
-    try {
-      storedTheme = window.localStorage.getItem("kairo-theme") as Theme | null;
-    } catch {
-      storedTheme = null;
-    }
-
-    const preferredDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialTheme = storedTheme === "light" || storedTheme === "dark" ? storedTheme : preferredDark ? "dark" : "light";
-    setTheme(initialTheme);
-
-    const handleScroll = () => {
-      const featureSection = document.getElementById("features");
-      if (!featureSection) return;
-
-      const rect = featureSection.getBoundingClientRect();
-      const progress = Math.min(0.999, Math.max(0, -rect.top / Math.max(1, rect.height - window.innerHeight)));
-      setActiveFeature(Math.floor(progress * features.length));
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
     onCleanup(() => {
       window.removeEventListener("click", handleClick);
       window.removeEventListener("popstate", handlePopState);
-      window.removeEventListener("scroll", handleScroll);
     });
   });
 
-  const isDark = createMemo(() => theme() === "dark");
-
-  createEffect(() => {
-    if (typeof document === "undefined") return;
-
-    const nextTheme = theme();
-    const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-    document.documentElement.dataset.theme = nextTheme;
-    document.documentElement.classList.toggle("dark", nextTheme === "dark");
-
-    if (themeColor) {
-      themeColor.content = nextTheme === "dark" ? "#10120f" : "#f7f3eb";
-    }
-  });
-
   const toggleTheme = () => {
-    const nextTheme = isDark() ? "light" : "dark";
-    setTheme(nextTheme);
-
+    const next = theme() === "dark" ? "light" : "dark";
+    setTheme(next);
     try {
-      window.localStorage.setItem("kairo-theme", nextTheme);
+      window.localStorage.setItem("kairo-theme", next);
     } catch {
-      // The visual theme should still switch if storage is unavailable.
+      // Theme switching still works when storage is unavailable.
     }
   };
 
   return (
-    <div class="min-h-screen bg-paper text-ink antialiased transition-colors duration-500 dark:bg-ink dark:text-paper">
-      <Header isDark={isDark()} isHome={isHomeRoute()} onToggleTheme={toggleTheme} />
-      <Switch
-        fallback={
-          <main>
-        <section class="relative isolate overflow-hidden px-5 pt-24 sm:px-8 lg:px-10" aria-labelledby="hero-title">
-          <div class="absolute inset-0 -z-20 bg-paper dark:bg-ink" />
-
-          <div class="mx-auto grid min-h-[calc(100svh-4.5rem)] max-w-6xl items-center gap-12 pb-14 pt-10 lg:grid-cols-[0.95fr_0.85fr] lg:pb-20">
-            <div class="max-w-2xl">
-              <a
-                href="#features"
-                class="group mb-7 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/55 px-3 py-2 text-sm font-medium text-ink shadow-sm backdrop-blur transition hover:border-ember/35 hover:text-ember dark:border-white/10 dark:bg-white/5 dark:text-paper dark:hover:border-ember/60"
-              >
-                <Icon name="sparkles" size={16} />
-                RSVP reading app for Android
-                <Icon name="arrowRight" size={15} class="transition group-hover:translate-x-0.5" />
-              </a>
-
-              <h1 id="hero-title" class="max-w-4xl text-balance text-6xl font-semibold leading-[0.92] tracking-normal text-ink sm:text-7xl lg:text-[6.5rem] dark:text-paper">
-                Kairo
-              </h1>
-              <p class="mt-7 max-w-2xl text-pretty text-xl leading-8 text-ink/72 dark:text-paper/72">
-                A calm RSVP reading app for Android, built for speed reading without chaos. Import DRM-free EPUB or MOBI books, read normally, then shift into focused word-by-word momentum.
-              </p>
-
-              <HeroActions />
-
-              <dl class="mt-12 grid max-w-2xl grid-cols-3 gap-4 border-y border-ink/10 py-5 dark:border-white/10">
-                <Stat label="Formats" value="EPUB / MOBI" />
-                <Stat label="Modes" value="Reader + RSVP" />
-                <Stat label="Pacing" value="Adaptive" />
-              </dl>
-            </div>
-
-            <div class="relative mx-auto flex min-h-[520px] w-full max-w-[500px] items-center justify-center lg:min-h-[640px] lg:justify-self-end">
-              <figure class="hero-screenshot-frame relative z-10 w-[min(78vw,318px)]">
-                <img
-                  src="/assets/kairo-rsvp-preview.jpg"
-                  alt="Kairo RSVP reader screen showing the focused word, surrounding reading context, playback controls, position, and speed."
-                  class="hero-screenshot-image"
-                />
-              </figure>
-            </div>
-          </div>
-        </section>
-
-        <section id="features" class="relative px-5 py-24 sm:px-8 lg:px-10">
-          <div class="mx-auto max-w-7xl">
-            <div class="mb-12 max-w-3xl">
-              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Reader workflow</p>
-              <h2 class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-                From library to high-speed focus, the path stays short.
-              </h2>
-            </div>
-
-            <div class="grid gap-10 lg:grid-cols-[0.92fr_1.08fr]">
-              <div class="lg:sticky lg:top-28 lg:h-[calc(100svh-8rem)]">
-                <FeatureVisual feature={features[activeFeature()] ?? features[0]} index={activeFeature()} />
-              </div>
-
-              <div class="space-y-5 lg:space-y-8">
-                <For each={features}>
-                  {(feature, index) => (
-                    <article class="feature-panel min-h-[52svh] rounded-lg border border-ink/10 bg-white/58 p-6 shadow-soft backdrop-blur transition dark:border-white/10 dark:bg-white/[0.045] dark:shadow-darksoft sm:p-8">
-                      <div class="mb-8 flex items-center justify-between gap-4">
-                        <span class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">{feature.eyebrow}</span>
-                        <span class="rounded-full border border-ink/10 px-3 py-1 text-xs font-semibold text-ink/56 dark:border-white/10 dark:text-paper/54">
-                          0{index() + 1}
-                        </span>
-                      </div>
-                      <h3 class="max-w-xl text-3xl font-semibold tracking-normal">{feature.title}</h3>
-                      <p class="mt-5 max-w-2xl text-lg leading-8 text-ink/68 dark:text-paper/68">{feature.body}</p>
-                      <div class="mt-10 inline-flex items-center gap-3 rounded-full border border-ink/10 px-4 py-2 text-sm font-semibold text-moss dark:border-white/10 dark:text-veil">
-                        <Icon name="check" size={16} />
-                        {feature.metric}
-                      </div>
-                    </article>
-                  )}
-                </For>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="about" class="border-y border-ink/10 bg-veil/55 px-5 py-24 transition-colors dark:border-white/10 dark:bg-white/[0.035] sm:px-8 lg:px-10">
-          <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">About the project</p>
-              <h2 class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-                Speed without the agitated feeling.
-              </h2>
-            </div>
-            <div class="space-y-7 text-lg leading-8 text-ink/72 dark:text-paper/70">
-              <p>
-                Most reading apps treat RSVP as a side feature. Kairo starts with the RSVP reading loop and builds outward: import a book, read in a quiet scrollable reader, then launch speed reading from the exact place you are already focused.
-              </p>
-              <p>
-                The engine shapes timing around punctuation, sentence flow, long words, phrase rhythm, page breaks, and readability floors. The result is a focused reader for people who want forward motion without turning reading into visual stress.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section id="technical" class="px-5 py-24 sm:px-8 lg:px-10">
-          <div class="mx-auto max-w-7xl">
-            <div class="grid gap-12 lg:grid-cols-[1fr_1fr]">
-              <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Under the hood</p>
-                <h2 class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-                  Native Android, local-first reading state, tuned RSVP pacing.
-                </h2>
-                <p class="mt-6 max-w-2xl text-lg leading-8 text-ink/68 dark:text-paper/68">
-                  Kairo is built as a native Kotlin app with Compose surfaces, local persistence, parser work for real-world ebooks, and language-aware tokenization foundations for Latin, CJK, and RTL text flows.
-                </p>
-              </div>
-
-              <div class="grid gap-3 sm:grid-cols-2">
-                <For each={technicalDetails}>
-                  {(detail) => (
-                    <div class="rounded-lg border border-ink/10 bg-white/56 p-4 text-sm font-semibold text-ink/76 dark:border-white/10 dark:bg-white/[0.04] dark:text-paper/74">
-                      {detail}
-                    </div>
-                  )}
-                </For>
-              </div>
-            </div>
-
-            <div class="mt-16 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <TechMetric icon="gauge" label="Speed bands" value="300 to 1,800+ WPM controls" />
-              <TechMetric icon="timer" label="Pause shaping" value="Paragraph and page-break breathing" />
-              <TechMetric icon="brain" label="Readability" value="Length, syllable, rarity, and complexity timing" />
-              <TechMetric icon="book" label="Reader state" value="Progress, bookmarks, preferences" />
-            </div>
-          </div>
-        </section>
-
-        <section class="px-5 pb-24 sm:px-8 lg:px-10" aria-labelledby="profiles-title">
-          <div class="mx-auto max-w-7xl rounded-lg border border-ink/10 bg-white/58 p-6 dark:border-white/10 dark:bg-white/[0.045] sm:p-8 lg:p-10">
-            <div class="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
-              <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">RSVP profiles</p>
-                <h2 id="profiles-title" class="mt-4 text-3xl font-semibold tracking-normal sm:text-4xl">
-                  Choose the rhythm for the material.
-                </h2>
-              </div>
-              <p class="max-w-xl text-base leading-7 text-ink/64 dark:text-paper/62">
-                Profiles tune cadence, punctuation, difficulty holds, and ramping without requiring every reader to start from raw sliders.
-              </p>
-            </div>
-            <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-7">
-              <For each={profiles}>
-                {([name, description]) => (
-                  <div class="rounded-lg border border-ink/10 p-4 dark:border-white/10">
-                    <h3 class="text-base font-semibold">{name}</h3>
-                    <p class="mt-3 text-sm leading-6 text-ink/62 dark:text-paper/60">{description}</p>
-                  </div>
-                )}
-              </For>
-            </div>
-          </div>
-        </section>
-
-        <section class="px-5 pb-28 sm:px-8 lg:px-10" aria-labelledby="seo-title">
-          <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr]">
-            <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Calm speed reading</p>
-              <h2 id="seo-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-                For readers searching for an RSVP reading app.
-              </h2>
-            </div>
-            <div>
-              <p class="text-lg leading-8 text-ink/70 dark:text-paper/68">
-                Kairo is for RSVP reading app searches, Android RSVP reader workflows, speed reading practice, calm reader sessions, EPUB speed reading, MOBI ebook import, and focus reading where the experience stays sparse, readable, and under the reader's control.
-              </p>
-              <div class="mt-8 flex flex-wrap gap-2">
-                <For each={keywords}>
-                  {(keyword) => (
-                    <span class="rounded-full border border-ink/10 px-3 py-1.5 text-sm font-semibold text-ink/58 dark:border-white/10 dark:text-paper/56">
-                      {keyword}
-                    </span>
-                  )}
-                </For>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <CoverageSection />
-
-        <section id="faq" class="border-t border-ink/10 bg-veil/42 px-5 py-24 transition-colors dark:border-white/10 dark:bg-white/[0.03] sm:px-8 lg:px-10" aria-labelledby="faq-title">
-          <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.72fr_1.28fr]">
-            <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">FAQ</p>
-              <h2 id="faq-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-                Common questions about RSVP reading with Kairo.
-              </h2>
-              <p class="mt-6 max-w-xl text-lg leading-8 text-ink/68 dark:text-paper/66">
-                Short answers for readers comparing RSVP reading, calm speed reading apps, Android ebook readers, EPUB import, MOBI import, and ORP highlighting.
-              </p>
-            </div>
-
-            <div class="grid gap-4">
-              <For each={faqItems}>
-                {(item) => (
-                  <article class="rounded-lg border border-ink/10 bg-white/60 p-5 shadow-sm transition dark:border-white/10 dark:bg-white/[0.045] sm:p-6">
-                    <h3 class="text-xl font-semibold tracking-normal text-ink dark:text-paper">{item.question}</h3>
-                    <p class="mt-4 text-base leading-7 text-ink/68 dark:text-paper/66">{item.answer}</p>
-                  </article>
-                )}
-              </For>
-            </div>
-          </div>
-
-          <script type="application/ld+json">{JSON.stringify(faqStructuredData)}</script>
-        </section>
-          </main>
-        }
-      >
+    <div class="site-shell">
+      <Header
+        isHome={isHome()}
+        isDark={theme() === "dark"}
+        menuOpen={menuOpen()}
+        onToggleMenu={() => setMenuOpen(!menuOpen())}
+        onToggleTheme={toggleTheme}
+      />
+      <Switch fallback={<HomePage />}>
         <Match when={privacyPage()}>
-          <PrivacyPolicyPage />
+          <PrivacyPage />
         </Match>
         <Match when={intentPage()} keyed>
           {(page) => <IntentPage page={page} />}
         </Match>
       </Switch>
-
-      <Footer isHome={isHomeRoute()} />
+      <Footer isHome={isHome()} />
     </div>
   );
 }
 
-function appPathFor(pathname: string) {
-  const normalizedPath = normalizePath(pathname);
+function Header(props: {
+  isHome: boolean;
+  isDark: boolean;
+  menuOpen: boolean;
+  onToggleMenu: () => void;
+  onToggleTheme: () => void;
+}) {
+  const homeHref = (hash: string) => (props.isHome ? hash : `/${hash}`);
 
-  return appRoutePaths.has(normalizedPath) ? normalizedPath : undefined;
+  return (
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="/" aria-label="Kairo home">
+          <img src="/assets/kairo-icon.png" width="36" height="36" alt="" />
+          <span>Kairo</span>
+          <span class="version-pill">1.1</span>
+        </a>
+        <nav classList={{ "nav-links": true, open: props.menuOpen }} aria-label="Primary navigation">
+          <a href={homeHref("#experience")}>Experience</a>
+          <a href={homeHref("#formats")}>Formats</a>
+          <a href={homeHref("#privacy")}>Privacy</a>
+          <a href={homeHref("#faq")}>FAQ</a>
+          <a href={githubUrl} target="_blank" rel="noreferrer">
+            Open source
+          </a>
+          <a href={coffeeUrl} target="_blank" rel="noreferrer">
+            Support
+          </a>
+          <a class="nav-play" href={playStoreUrl} target="_blank" rel="noreferrer">
+            Get Kairo
+            <Icon name="arrow" />
+          </a>
+        </nav>
+        <div class="nav-actions">
+          <button class="icon-button" type="button" onClick={props.onToggleTheme} aria-label={`Use ${props.isDark ? "light" : "dark"} theme`}>
+            <Icon name={props.isDark ? "sun" : "moon"} />
+          </button>
+          <button
+            class="icon-button menu-button"
+            type="button"
+            onClick={props.onToggleMenu}
+            aria-expanded={props.menuOpen}
+            aria-label={props.menuOpen ? "Close menu" : "Open menu"}
+          >
+            <Icon name={props.menuOpen ? "x" : "menu"} />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
 }
 
-function scrollToRouteTarget(hash: string) {
-  window.requestAnimationFrame(() => {
-    if (!hash) {
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      return;
-    }
+function HomePage() {
+  return (
+    <main>
+      <section class="hero section-pad" aria-labelledby="hero-title">
+        <div class="hero-glow" aria-hidden="true" />
+        <div class="hero-grid content-wrap">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="status-dot" />
+              Kairo 1.1 · Free on Android
+            </p>
+            <h1 id="hero-title">
+              Read at the speed of <span>thought.</span>
+            </h1>
+            <p class="hero-lede">
+              Bring your own books and documents. Read with full context, then shift into adaptive RSVP or Bionic Reading
+              whenever you want more momentum.
+            </p>
+            <div class="hero-actions">
+              <PlayButton />
+              <a class="button-secondary" href="#experience">
+                See how it works
+                <Icon name="arrow" />
+              </a>
+              <a class="button-secondary hero-support" href={coffeeUrl} target="_blank" rel="noreferrer">
+                <Icon name="coffee" />
+                Buy me a coffee
+              </a>
+            </div>
+            <div class="hero-proof" aria-label="Kairo highlights">
+              <span>
+                <Icon name="check" /> 10 format families
+              </span>
+              <span>
+                <Icon name="shield" /> Local-first
+              </span>
+              <span>
+                <Icon name="github" /> Open source
+              </span>
+            </div>
+          </div>
 
-    const target = elementForHash(hash);
-    if (target) target.scrollIntoView({ block: "start", behavior: "auto" });
+          <div class="hero-visual" aria-label="Kairo app screenshots">
+            <div class="orbit orbit-one" aria-hidden="true" />
+            <div class="orbit orbit-two" aria-hidden="true" />
+            <PhoneFrame class="hero-phone hero-phone-back" src="/assets/screens/library.webp" alt="Kairo library with imported books, progress and bookmarks" />
+            <PhoneFrame class="hero-phone hero-phone-mid" src="/assets/screens/reader-controls.webp" alt="Kairo reader with chapter text and reading controls" />
+            <PhoneFrame class="hero-phone hero-phone-front" src="/assets/screens/rsvp.webp" alt="Kairo RSVP screen with a focused word and playback controls" />
+            <div class="floating-note note-formats">
+              <span>Bring your own files</span>
+              <strong>EPUB · PDF · DOCX + more</strong>
+            </div>
+            <div class="floating-note note-local">
+              <Icon name="shield" />
+              <span>
+                <strong>Stays yours</strong>
+                Local books & progress
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="scroll-cue content-wrap" aria-hidden="true">
+          <span>Scroll to explore</span>
+          <i />
+        </div>
+      </section>
+
+      <section class="intro-strip" aria-label="Kairo design principles">
+        <div class="content-wrap intro-strip-grid">
+          <p>Speed without chaos.</p>
+          <p>Focus without clutter.</p>
+          <p>Your library without the cloud.</p>
+        </div>
+      </section>
+
+      <section id="experience" class="section-pad">
+        <div class="content-wrap">
+          <SectionHeading
+            eyebrow="One continuous reading flow"
+            title="Change how you read. Not where you are."
+            body="Kairo keeps the library, the page and your accelerated reading modes connected. Pick the experience that fits the next passage."
+          />
+          <div class="mode-grid">
+            <article class="mode-card mode-reader">
+              <div class="mode-copy">
+                <span class="mode-number">01</span>
+                <p class="eyebrow">Reader</p>
+                <h3>Stay with the whole page.</h3>
+                <p>Scrollable chapters, inline images, table of contents, bookmarks, progress and a movable focus word.</p>
+              </div>
+              <PhoneFrame src="/assets/screens/reader-rsvp-dock.webp" alt="Kairo standard reader with the RSVP launch control" />
+            </article>
+            <article class="mode-card mode-rsvp">
+              <div class="mode-copy">
+                <span class="mode-number">02</span>
+                <p class="eyebrow">Adaptive RSVP</p>
+                <h3>Give every word one clear place.</h3>
+                <p>ORP alignment and timing shaped by punctuation, length, syllables, clauses and readability.</p>
+              </div>
+              <PhoneFrame src="/assets/screens/rsvp.webp" alt="Kairo RSVP mode showing the word seldom at a stable focal point" />
+            </article>
+            <article class="mode-card mode-bionic">
+              <div class="mode-copy">
+                <span class="mode-number">03</span>
+                <p class="eyebrow">Bionic Reading</p>
+                <h3>Move in larger, focused pieces.</h3>
+                <p>Timed text chunks with emphasised beginnings give you momentum while keeping more sentence context in view.</p>
+              </div>
+              <BionicSample />
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="formats" class="formats-section section-pad">
+        <div class="content-wrap">
+          <div class="formats-head">
+            <SectionHeading
+              eyebrow="Kairo 1.1 format support"
+              title="Your reading list is bigger than one file type."
+              body="Choose a supported file from Android storage. Kairo detects it automatically, builds a local library entry and opens the same focused reading toolkit."
+            />
+            <a class="text-link" href="/supported-formats/">
+              Format details and limitations <Icon name="arrow" />
+            </a>
+          </div>
+          <div class="format-grid">
+            <For each={formats}>
+              {([name, type], index) => (
+                <div class="format-card">
+                  <span>{String(index() + 1).padStart(2, "0")}</span>
+                  <strong>{name}</strong>
+                  <small>{type}</small>
+                </div>
+              )}
+            </For>
+          </div>
+          <p class="format-note">
+            DRM-free files only. PDFs require selectable text; image-only and scanned PDFs are not supported yet.
+          </p>
+        </div>
+      </section>
+
+      <section class="section-pad tuning-section">
+        <div class="content-wrap tuning-grid">
+          <div class="tuning-copy">
+            <p class="eyebrow">Power when you want it</p>
+            <h2>Simple on the surface. Remarkably tuneable underneath.</h2>
+            <p>
+              Start with a profile, press play and read. When you want finer control, Kairo exposes the pacing, typography,
+              brightness and focus settings that actually change how a session feels.
+            </p>
+            <div class="profile-list" aria-label="Built-in RSVP profiles">
+              <For each={profiles}>{(profile) => <span>{profile}</span>}</For>
+            </div>
+          </div>
+          <div class="tuning-visual">
+            <PhoneFrame src="/assets/screens/rsvp-settings.webp?v=1.1.0" alt="Kairo RSVP settings with profile and timing controls" />
+            <div class="tuning-callout callout-one">
+              <span>Estimated pace</span>
+              <strong>811 WPM</strong>
+            </div>
+            <div class="tuning-callout callout-two">
+              <span>Controls</span>
+              <strong>Rhythm · readability · display</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="feature-bento section-pad">
+        <div class="content-wrap">
+          <SectionHeading
+            eyebrow="Designed around attention"
+            title="Everything that helps. Nothing that performs for attention."
+            body="The details are quiet, but they are not shallow."
+          />
+          <div class="bento-grid">
+            <article class="bento-card bento-focus">
+              <Icon name="focus" />
+              <p class="eyebrow">Focus mode</p>
+              <h3>Hide the chrome. Pause the noise.</h3>
+              <p>Use a full-screen reader and optionally engage Android Do Not Disturb during focused sessions.</p>
+            </article>
+            <article class="bento-card bento-theme">
+              <p class="eyebrow">Six reader themes</p>
+              <h3>Find a softer kind of contrast.</h3>
+              <div class="theme-swatches" aria-label="Light, Sepia, Dark, Nord, Cyberpunk and Forest themes">
+                <span class="swatch-light" />
+                <span class="swatch-sepia" />
+                <span class="swatch-dark" />
+                <span class="swatch-nord" />
+                <span class="swatch-cyber" />
+                <span class="swatch-forest" />
+              </div>
+            </article>
+            <article class="bento-card bento-bookmarks">
+              <Icon name="book" />
+              <p class="eyebrow">Reading state</p>
+              <h3>Your place, saved locally.</h3>
+              <p>Books, bookmarks, completion, progress and preferences stay connected on your device.</p>
+            </article>
+            <article class="bento-card bento-context">
+              <div class="orp-demo" aria-hidden="true">
+                <span>prev</span>
+                <strong>mome<em>n</em>tum</strong>
+                <span>next</span>
+              </div>
+              <p class="eyebrow">Context assist</p>
+              <h3>More context, without leaving the focal band.</h3>
+              <p>Optional previous and upcoming word cues soften the edges of single-focus RSVP.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="gallery-section section-pad" aria-labelledby="gallery-title">
+        <div class="content-wrap">
+          <div class="gallery-heading">
+            <div>
+              <p class="eyebrow">Inside Kairo</p>
+              <h2 id="gallery-title">A reading interface that gets out of the way.</h2>
+            </div>
+            <p>Near-black surfaces, restrained colour and controls that appear when they are useful.</p>
+          </div>
+          <div class="screen-gallery">
+            <figure>
+              <img src="/assets/screens/library.webp" width="1080" height="1920" alt="Kairo library showing book covers, progress and navigation tabs" loading="lazy" />
+              <figcaption>Library</figcaption>
+            </figure>
+            <figure>
+              <img src="/assets/screens/settings.webp" width="333" height="592" alt="Kairo settings home with RSVP, reader, focus and startup settings" loading="lazy" />
+              <figcaption>Settings</figcaption>
+            </figure>
+            <figure>
+              <img src="/assets/screens/reader-settings.webp" width="1080" height="1920" alt="Kairo reader settings with font, theme, brightness and scrolling options" loading="lazy" />
+              <figcaption>Reader themes</figcaption>
+            </figure>
+            <figure>
+              <img src="/assets/screens/reader-controls.webp" width="1080" height="1920" alt="Kairo book reader with bookmarks, focus mode and table of contents controls" loading="lazy" />
+              <figcaption>Reader controls</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="privacy" class="privacy-section section-pad">
+        <div class="content-wrap privacy-grid">
+          <div class="privacy-mark">
+            <Icon name="shield" />
+          </div>
+          <div>
+            <p class="eyebrow">Local-first by design</p>
+            <h2>Your books are not our business.</h2>
+          </div>
+          <div class="privacy-copy">
+            <p>
+              Kairo has no account system, ads or analytics SDKs. Imported files, extracted content, progress, bookmarks and
+              preferences stay in app-private storage.
+            </p>
+            <p>
+              Internet access supports Google Play's flexible update flow. It is not used to upload your library or reading
+              activity to a Kairo server.
+            </p>
+            <a class="text-link" href="/privacy-policy/">
+              Read the privacy policy <Icon name="arrow" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="open-section section-pad">
+        <div class="content-wrap open-card">
+          <div>
+            <p class="eyebrow">Free and open source</p>
+            <h2>Built in the open. Shaped by readers.</h2>
+            <p>
+              Inspect the code, report an issue or help make focused reading better. Kairo is a native Kotlin and Jetpack
+              Compose project on GitHub.
+            </p>
+          </div>
+          <div class="open-actions">
+            <a class="button-primary" href={githubUrl} target="_blank" rel="noreferrer">
+              <Icon name="github" /> View on GitHub
+            </a>
+            <a class="button-secondary" href={coffeeUrl} target="_blank" rel="noreferrer">
+              <Icon name="coffee" /> Support Kairo
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="faq-section section-pad">
+        <div class="content-wrap faq-grid">
+          <div class="faq-intro">
+            <p class="eyebrow">Questions, answered</p>
+            <h2>Everything you need before the first page.</h2>
+            <p>
+              Still wondering about a file or feature? Email{" "}
+              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>.
+            </p>
+          </div>
+          <div class="faq-list">
+            <For each={faqItems}>
+              {(item, index) => (
+                <details open={index() === 0}>
+                  <summary>
+                    <span>{item.question}</span>
+                    <i aria-hidden="true" />
+                  </summary>
+                  <p>{item.answer}</p>
+                </details>
+              )}
+            </For>
+          </div>
+        </div>
+        <script type="application/ld+json">{JSON.stringify(faqStructuredData)}</script>
+      </section>
+
+      <CoverageSection />
+
+      <section class="final-cta section-pad">
+        <div class="content-wrap final-cta-inner">
+          <img src="/assets/kairo-icon.png" width="88" height="88" alt="" />
+          <p class="eyebrow">Your next chapter, in motion</p>
+          <h2>Read differently.</h2>
+          <p>Kairo is free on Android 7.0 and newer.</p>
+          <PlayButton />
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function IntentPage(props: { page: SeoPage }) {
+  const articleData = () => ({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: props.page.heading,
+    description: props.page.description,
+    url: `${siteOrigin}${props.page.path}`,
+    mainEntityOfPage: `${siteOrigin}${props.page.path}`,
+    author: { "@type": "Organization", name: "Kairo" },
+    publisher: { "@type": "Organization", name: "Kairo", logo: { "@type": "ImageObject", url: `${siteOrigin}/assets/kairo-icon.png` } },
   });
+
+  return (
+    <main class="editorial-page">
+      <article class="section-pad">
+        <div class="article-wrap">
+          <a class="back-link" href="/">
+            <Icon name="arrow" /> Back to Kairo
+          </a>
+          <p class="eyebrow">{props.page.eyebrow}</p>
+          <h1>{props.page.heading}</h1>
+          <p class="article-summary">{props.page.summary}</p>
+          <div class="article-actions">
+            <PlayButton />
+            <a class="button-secondary" href="/#experience">
+              Explore the app <Icon name="arrow" />
+            </a>
+          </div>
+          <ul class="highlight-grid" aria-label="Highlights">
+            <For each={props.page.highlights}>{(highlight) => <li><Icon name="check" /> {highlight}</li>}</For>
+          </ul>
+          <div class="article-sections">
+            <For each={props.page.sections}>
+              {(section, index) => (
+                <section>
+                  <span>{String(index() + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h2>{section.title}</h2>
+                    <p>{section.body}</p>
+                  </div>
+                </section>
+              )}
+            </For>
+          </div>
+          <aside class="related-card">
+            <p class="eyebrow">Keep exploring</p>
+            <div>
+              <For each={props.page.related}>
+                {(path) => {
+                  const page = () => seoPages.find((candidate) => candidate.path === path);
+                  return (
+                    <a href={path}>
+                      {page()?.navLabel ?? "Kairo guide"}
+                      <Icon name="arrow" />
+                    </a>
+                  );
+                }}
+              </For>
+            </div>
+          </aside>
+        </div>
+        <script type="application/ld+json">{JSON.stringify(articleData())}</script>
+      </article>
+    </main>
+  );
 }
 
-function elementForHash(hash: string) {
-  const rawId = hash.slice(1);
+function PrivacyPage() {
+  const dataRows = [
+    {
+      title: "Imported books and documents",
+      body:
+        "Files you choose, extracted text, covers, images and metadata are processed locally and stored in Kairo's app-private storage. They are not uploaded to a Kairo server.",
+    },
+    {
+      title: "Reading state and preferences",
+      body:
+        "Bookmarks, completion, reading position, themes, typography, focus options and timed-reading settings are stored locally so the app can resume your experience.",
+    },
+    {
+      title: "Google Play update checks",
+      body:
+        "Kairo uses Google Play's in-app update service to check for, download and complete eligible app updates. This is handled by Google Play under your Google and device settings.",
+    },
+    {
+      title: "Notification policy access",
+      body:
+        "If you enable Focus Mode notification pausing and grant Android's access, Kairo can temporarily use Do Not Disturb. It does not read notification content.",
+    },
+    {
+      title: "Support email",
+      body:
+        `If you email ${supportEmail}, your address and message are used only to respond and retained as needed for support, legal or abuse-prevention purposes.`,
+    },
+  ];
 
-  try {
-    return document.getElementById(decodeURIComponent(rawId));
-  } catch {
-    return document.getElementById(rawId);
-  }
-}
-
-function syncPageMetadata(route: SeoRoute, canonicalUrl: string) {
-  document.title = route.title;
-  setMetaContent("name", "description", route.description);
-  setMetaContent("name", "keywords", keywordText(route.keywords));
-  setMetaContent("property", "og:title", route.title);
-  setMetaContent("property", "og:description", route.description);
-  setMetaContent("property", "og:url", canonicalUrl);
-  setMetaContent("name", "twitter:title", route.title);
-  setMetaContent("name", "twitter:description", route.description);
-
-  const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-  if (canonical) canonical.href = canonicalUrl;
-}
-
-function setMetaContent(attribute: "name" | "property", value: string, content: string) {
-  const element = document.querySelector<HTMLMetaElement>(`meta[${attribute}="${value}"]`);
-  if (element) element.content = content;
-}
-
-function keywordText(keywords: SeoRoute["keywords"]) {
-  return typeof keywords === "string" ? keywords : keywords.join(", ");
+  return (
+    <main class="editorial-page privacy-page">
+      <article class="section-pad">
+        <div class="article-wrap">
+          <a class="back-link" href="/">
+            <Icon name="arrow" /> Back to Kairo
+          </a>
+          <p class="eyebrow">Privacy policy · Updated 27 July 2026</p>
+          <h1>Private reading should be the default.</h1>
+          <p class="article-summary">
+            Kairo does not operate an account or reading-data service. Your imported content, progress, bookmarks and preferences
+            stay on your device.
+          </p>
+          <div class="privacy-summary">
+            <article>
+              <Icon name="shield" />
+              <h2>No Kairo cloud</h2>
+              <p>Your library and reading activity are not sent to a developer-operated server.</p>
+            </article>
+            <article>
+              <Icon name="focus" />
+              <h2>No ads or analytics</h2>
+              <p>The current app includes no advertising, analytics or social tracking SDKs.</p>
+            </article>
+            <article>
+              <Icon name="book" />
+              <h2>Local control</h2>
+              <p>Delete books in Kairo, clear app storage or uninstall the app to remove local data.</p>
+            </article>
+          </div>
+          <section class="policy-section">
+            <p class="eyebrow">What the app handles</p>
+            <div class="policy-rows">
+              <For each={dataRows}>
+                {(row, index) => (
+                  <article>
+                    <span>{String(index() + 1).padStart(2, "0")}</span>
+                    <div>
+                      <h2>{row.title}</h2>
+                      <p>{row.body}</p>
+                    </div>
+                  </article>
+                )}
+              </For>
+            </div>
+          </section>
+          <section class="policy-prose">
+            <h2>Collection, use and sharing</h2>
+            <p>
+              Kairo does not collect imported content, reading history, progress, bookmarks, preferences, advertising identifiers
+              or analytics on developer-controlled servers. It does not sell personal data. The app's internet permission supports
+              the Google Play in-app update flow; it is not used to transmit your library or reading activity to Kairo.
+            </p>
+            <p>
+              Android system services may handle data under your device and Google account settings. These include Google Play app
+              delivery and updates, and optional Android backup. The Kairo developer does not receive or access your device backups.
+            </p>
+          </section>
+          <section class="policy-prose">
+            <h2>Storage, security and deletion</h2>
+            <p>
+              Local content, the Room database and app preferences use Android app-private storage. Android's sandbox limits access
+              by other apps under normal device security rules. Data remains until you remove the relevant book, clear Kairo's app
+              storage or uninstall Kairo.
+            </p>
+            <p>
+              If Android backup is enabled, Kairo's database and preferences may be included in a Google-managed backup and restored
+              to another device. Manage or remove those copies through your Android and Google backup settings.
+            </p>
+          </section>
+          <section class="policy-prose">
+            <h2>Accounts, children and policy changes</h2>
+            <p>
+              Kairo has no account, sign-in, subscription, payment or external account deletion flow. It is not directed to children
+              and does not knowingly collect children's personal information. If you believe a child has sent information through a
+              support message, contact us so it can be deleted.
+            </p>
+            <p>
+              This policy may change when Kairo's behaviour, third-party services or legal requirements change. The effective date at
+              the top will be updated whenever the policy changes materially.
+            </p>
+          </section>
+          <aside class="contact-card">
+            <div>
+              <p class="eyebrow">Questions or requests</p>
+              <h2>Talk to a human.</h2>
+              <p>For privacy, deletion or support questions, email the Kairo project.</p>
+            </div>
+            <a class="button-primary" href={`mailto:${supportEmail}`}>{supportEmail}</a>
+          </aside>
+        </div>
+      </article>
+    </main>
+  );
 }
 
 function CoverageSection() {
   return (
-    <section id="coverage" class="border-t border-ink/10 px-5 pb-28 pt-24 dark:border-white/10 sm:px-8 lg:px-10" aria-labelledby="coverage-title">
-      <div class="mx-auto max-w-7xl">
-        <div class="mb-10 max-w-3xl">
-          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Reading guides</p>
-          <h2 id="coverage-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-            More ways to find the right RSVP reader.
-          </h2>
-          <p class="mt-6 text-lg leading-8 text-ink/68 dark:text-paper/66">
-            Focused pages cover the searches readers actually use: RSVP reading app, Android RSVP reader, EPUB speed reading, MOBI import, ORP highlighting, and calm speed reading.
-          </p>
+    <section class="coverage-section section-pad" aria-labelledby="coverage-title">
+      <div class="content-wrap">
+        <div class="coverage-head">
+          <div>
+            <p class="eyebrow">Reading guides</p>
+            <h2 id="coverage-title">Go deeper into the way Kairo reads.</h2>
+          </div>
+          <p>Clear, focused guides to the formats and reading modes available in Kairo 1.1.</p>
         </div>
-
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div class="coverage-grid">
           <For each={seoPages}>
-            {(page) => (
-              <a
-                href={page.path}
-                class="group rounded-lg border border-ink/10 bg-white/60 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-ember/35 hover:shadow-soft dark:border-white/10 dark:bg-white/[0.045] dark:hover:border-ember/55 sm:p-6"
-              >
-                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-ember">{page.eyebrow}</p>
-                <h3 class="mt-4 text-2xl font-semibold tracking-normal">{page.navLabel}</h3>
-                <p class="mt-4 text-sm leading-6 text-ink/64 dark:text-paper/62">{page.description}</p>
-                <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-moss transition group-hover:text-ember dark:text-veil">
-                  Read the guide
-                  <Icon name="arrowRight" size={15} class="transition group-hover:translate-x-0.5" />
-                </span>
+            {(page, index) => (
+              <a href={page.path}>
+                <span>{String(index() + 1).padStart(2, "0")}</span>
+                <div>
+                  <p class="eyebrow">{page.eyebrow}</p>
+                  <h3>{page.navLabel}</h3>
+                </div>
+                <Icon name="arrow" />
               </a>
             )}
           </For>
@@ -652,588 +819,167 @@ function CoverageSection() {
   );
 }
 
-function IntentPage(props: { page: SeoPage }) {
-  return (
-    <main>
-      <article class="px-5 pb-20 pt-28 sm:px-8 lg:px-10">
-        <div class="mx-auto max-w-5xl">
-          <nav class="mb-9 flex flex-wrap items-center gap-2 text-sm font-semibold text-ink/52 dark:text-paper/50" aria-label="Breadcrumb">
-            <a class="hover:text-ember" href="/">Kairo</a>
-            <span aria-hidden="true">/</span>
-            <span class="text-ink/70 dark:text-paper/68">{props.page.navLabel}</span>
-          </nav>
-
-          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">{props.page.eyebrow}</p>
-          <h1 class="mt-5 max-w-4xl text-balance text-5xl font-semibold leading-[0.98] tracking-normal sm:text-6xl">
-            {props.page.heading}
-          </h1>
-          <p class="mt-7 max-w-3xl text-xl leading-8 text-ink/72 dark:text-paper/70">{props.page.summary}</p>
-
-          <div class="mt-8 flex flex-wrap gap-2">
-            <For each={props.page.keywords}>
-              {(keyword) => (
-                <span class="rounded-full border border-ink/10 px-3 py-1.5 text-sm font-semibold text-ink/58 dark:border-white/10 dark:text-paper/56">
-                  {keyword}
-                </span>
-              )}
-            </For>
-          </div>
-        </div>
-      </article>
-
-      <section class="border-y border-ink/10 bg-veil/45 px-5 py-20 dark:border-white/10 dark:bg-white/[0.03] sm:px-8 lg:px-10">
-        <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-3">
-          <For each={props.page.sections}>
-            {(section) => (
-              <section class="rounded-lg border border-ink/10 bg-white/60 p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.045]">
-                <h2 class="text-2xl font-semibold tracking-normal">{section.title}</h2>
-                <p class="mt-5 text-base leading-7 text-ink/68 dark:text-paper/66">{section.body}</p>
-              </section>
-            )}
-          </For>
-        </div>
-      </section>
-
-      <section class="px-5 py-20 sm:px-8 lg:px-10">
-        <div class="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.82fr_1.18fr]">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Why it fits</p>
-            <h2 class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-              Built for focused ebook reading, not only speed.
-            </h2>
-          </div>
-          <div class="grid gap-3 sm:grid-cols-2">
-            <For each={props.page.highlights}>
-              {(highlight) => (
-                <div class="flex items-center gap-3 rounded-lg border border-ink/10 bg-white/58 p-4 text-sm font-semibold text-ink/72 dark:border-white/10 dark:bg-white/[0.04] dark:text-paper/70">
-                  <Icon name="check" size={16} />
-                  {highlight}
-                </div>
-              )}
-            </For>
-          </div>
-        </div>
-      </section>
-
-      <section class="border-t border-ink/10 px-5 pb-24 pt-20 dark:border-white/10 sm:px-8 lg:px-10">
-        <div class="mx-auto max-w-7xl">
-          <div class="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Related reading</p>
-              <h2 class="mt-4 text-3xl font-semibold tracking-normal sm:text-4xl">Explore the rest of Kairo.</h2>
-            </div>
-            <a class="inline-flex items-center gap-2 text-sm font-semibold text-moss hover:text-ember dark:text-veil" href="/#features">
-              See product features
-              <Icon name="arrowRight" size={15} />
-            </a>
-          </div>
-
-          <div class="grid gap-4 md:grid-cols-3">
-            <For each={props.page.related.map((path) => seoPages.find((page) => page.path === path)).filter((page): page is SeoPage => Boolean(page))}>
-              {(page) => (
-                <a class="rounded-lg border border-ink/10 bg-white/58 p-5 transition hover:border-ember/40 dark:border-white/10 dark:bg-white/[0.04]" href={page.path}>
-                  <p class="text-sm font-semibold text-ember">{page.eyebrow}</p>
-                  <h3 class="mt-3 text-xl font-semibold">{page.navLabel}</h3>
-                  <p class="mt-3 text-sm leading-6 text-ink/62 dark:text-paper/60">{page.summary}</p>
-                </a>
-              )}
-            </For>
-          </div>
-        </div>
-      </section>
-
-      <script type="application/ld+json">{JSON.stringify(intentPageStructuredData(props.page))}</script>
-    </main>
-  );
-}
-
-function PrivacyPolicyPage() {
-  const privacyStructuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${siteOrigin}/privacy-policy/#privacy-policy`,
-    url: `${siteOrigin}/privacy-policy/`,
-    name: privacyPolicySeo.title,
-    description: privacyPolicySeo.description,
-    dateModified: "2026-05-27",
-    publisher: {
-      "@type": "Person",
-      name: "Edward Kemp",
-    },
-    about: {
-      "@id": `${siteOrigin}/#app`,
-    },
-  };
-
-  return (
-    <main>
-      <article class="px-5 pb-16 pt-28 sm:px-8 lg:px-10">
-        <div class="mx-auto max-w-5xl">
-          <nav class="mb-9 flex flex-wrap items-center gap-2 text-sm font-semibold text-ink/52 dark:text-paper/50" aria-label="Breadcrumb">
-            <a class="hover:text-ember" href="/">Kairo</a>
-            <span aria-hidden="true">/</span>
-            <span class="text-ink/70 dark:text-paper/68">Privacy Policy</span>
-          </nav>
-
-          <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Privacy Policy</p>
-          <h1 class="mt-5 max-w-4xl text-balance text-5xl font-semibold leading-[0.98] tracking-normal sm:text-6xl">
-            Privacy Policy
-          </h1>
-          <p class="mt-5 text-sm font-semibold text-ink/54 dark:text-paper/52">Last updated: {privacyLastUpdated}</p>
-          <p class="mt-7 max-w-3xl text-xl leading-8 text-ink/72 dark:text-paper/70">
-            This Privacy Policy applies to Kairo, also referred to as Kairo RSVP Reader, an Android app for importing DRM-free EPUB and MOBI books and reading them locally with normal reader and RSVP reading modes.
-          </p>
-
-          <dl class="mt-10 grid gap-3 rounded-lg border border-ink/10 bg-white/56 p-5 dark:border-white/10 dark:bg-white/[0.04] sm:grid-cols-3 sm:p-6">
-            <div>
-              <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">App</dt>
-              <dd class="mt-2 text-sm font-semibold">Kairo RSVP Reader</dd>
-            </div>
-            <div>
-              <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">Developer</dt>
-              <dd class="mt-2 text-sm font-semibold">Edward Kemp</dd>
-            </div>
-            <div>
-              <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">Contact</dt>
-              <dd class="mt-2 text-sm font-semibold">
-                <a class="text-moss hover:text-ember dark:text-veil" href="mailto:kairoapp@proton.me">kairoapp@proton.me</a>
-              </dd>
-            </div>
-          </dl>
-        </div>
-      </article>
-
-      <section class="border-y border-ink/10 bg-veil/45 px-5 py-16 dark:border-white/10 dark:bg-white/[0.03] sm:px-8 lg:px-10" aria-labelledby="privacy-summary-title">
-        <div class="mx-auto max-w-7xl">
-          <h2 id="privacy-summary-title" class="text-3xl font-semibold tracking-normal sm:text-4xl">Plain-language summary</h2>
-          <div class="mt-8 grid gap-4 lg:grid-cols-3">
-            <For each={privacySummaryCards}>
-              {(card) => (
-                <section class="rounded-lg border border-ink/10 bg-white/62 p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.045]">
-                  <h3 class="text-xl font-semibold">{card.title}</h3>
-                  <p class="mt-4 text-base leading-7 text-ink/68 dark:text-paper/66">{card.body}</p>
-                </section>
-              )}
-            </For>
-          </div>
-        </div>
-      </section>
-
-      <section class="px-5 py-20 sm:px-8 lg:px-10" aria-labelledby="privacy-data-title">
-        <div class="mx-auto max-w-7xl">
-          <div class="max-w-3xl">
-            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Data handling</p>
-            <h2 id="privacy-data-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-              What Kairo accesses, uses, and stores.
-            </h2>
-          </div>
-
-          <div class="mt-10 overflow-hidden rounded-lg border border-ink/10 bg-white/54 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
-            <For each={privacyDataRows}>
-              {(row) => (
-                <section class="grid gap-5 border-b border-ink/10 p-5 last:border-b-0 dark:border-white/10 lg:grid-cols-[0.72fr_1fr_1fr_1fr] lg:p-6">
-                  <h3 class="text-xl font-semibold tracking-normal">{row.title}</h3>
-                  <PrivacyDataColumn label="Accessed or stored" body={row.access} />
-                  <PrivacyDataColumn label="Used for" body={row.purpose} />
-                  <PrivacyDataColumn label="Handled by" body={row.handling} />
-                </section>
-              )}
-            </For>
-          </div>
-        </div>
-      </section>
-
-      <section class="border-t border-ink/10 px-5 py-20 dark:border-white/10 sm:px-8 lg:px-10" aria-labelledby="privacy-details-title">
-        <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.76fr_1.24fr]">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Policy details</p>
-            <h2 id="privacy-details-title" class="mt-4 text-balance text-4xl font-semibold tracking-normal sm:text-5xl">
-              Google Play privacy disclosures for Kairo.
-            </h2>
-          </div>
-          <div class="space-y-4">
-            <For each={privacySections}>
-              {(section) => (
-                <section class="rounded-lg border border-ink/10 bg-white/58 p-6 dark:border-white/10 dark:bg-white/[0.04]">
-                  <h3 class="text-2xl font-semibold tracking-normal">{section.title}</h3>
-                  <div class="mt-5 space-y-4">
-                    <For each={section.paragraphs}>
-                      {(paragraph) => <p class="text-base leading-7 text-ink/68 dark:text-paper/66">{paragraph}</p>}
-                    </For>
-                  </div>
-                </section>
-              )}
-            </For>
-          </div>
-        </div>
-      </section>
-
-      <section class="border-t border-ink/10 bg-veil/42 px-5 py-16 dark:border-white/10 dark:bg-white/[0.03] sm:px-8 lg:px-10" aria-labelledby="privacy-contact-title">
-        <div class="mx-auto flex max-w-7xl flex-col justify-between gap-8 md:flex-row md:items-center">
-          <div class="max-w-2xl">
-            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-ember">Privacy contact</p>
-            <h2 id="privacy-contact-title" class="mt-4 text-3xl font-semibold tracking-normal sm:text-4xl">
-              Questions or deletion requests
-            </h2>
-            <p class="mt-5 text-base leading-7 text-ink/68 dark:text-paper/66">
-              For privacy questions, support inquiries, or deletion requests related to information you have sent directly by email, contact the Kairo privacy address.
-            </p>
-          </div>
-          <a
-            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-moss px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-ink dark:bg-white/10 dark:text-paper dark:hover:bg-white/[0.15]"
-            href="mailto:kairoapp@proton.me"
-          >
-            Contact privacy
-            <Icon name="arrowRight" size={15} />
-          </a>
-        </div>
-      </section>
-
-      <script type="application/ld+json">{JSON.stringify(privacyStructuredData)}</script>
-    </main>
-  );
-}
-
-function PrivacyDataColumn(props: { label: string; body: string }) {
-  return (
-    <div>
-      <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">{props.label}</p>
-      <p class="mt-3 text-sm leading-6 text-ink/66 dark:text-paper/64">{props.body}</p>
-    </div>
-  );
-}
-
-function intentPageStructuredData(page: SeoPage) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${siteOrigin}${page.path}#webpage`,
-    url: `${siteOrigin}${page.path}`,
-    name: page.title,
-    description: page.description,
-    isPartOf: {
-      "@id": `${siteOrigin}/#website`,
-    },
-    about: page.keywords.map((keyword) => ({
-      "@type": "Thing",
-      name: keyword,
-    })),
-  };
-}
-
 function Footer(props: { isHome: boolean }) {
-  const sectionHref = (hash: string) => (props.isHome ? hash : `/${hash}`);
-
   return (
-    <footer class="border-t border-ink/10 px-5 py-10 dark:border-white/10 sm:px-8 lg:px-10">
-      <div class="mx-auto flex max-w-7xl flex-col justify-between gap-6 text-sm text-ink/56 dark:text-paper/52 md:flex-row md:items-center">
-        <div class="flex items-center gap-3">
-          <img src="/assets/kairo-icon.png" alt="" class="h-8 w-8 rounded-lg" />
-          <span>Kairo RSVP Reader</span>
+    <footer class="site-footer">
+      <div class="content-wrap footer-grid">
+        <div>
+          <a class="brand" href="/">
+            <img src="/assets/kairo-icon.png" width="36" height="36" alt="" />
+            <span>Kairo</span>
+          </a>
+          <p>Focused reading for Android.</p>
         </div>
-        <div class="flex flex-wrap gap-4">
-          <a class="hover:text-ember" href={sectionHref("#features")}>Features</a>
-          <a class="hover:text-ember" href={sectionHref("#about")}>About</a>
-          <a class="hover:text-ember" href={sectionHref("#technical")}>Technical</a>
-          <a class="hover:text-ember" href={sectionHref("#coverage")}>Guides</a>
-          <a class="hover:text-ember" href={sectionHref("#faq")}>FAQ</a>
-          <a class="hover:text-ember" href="/privacy-policy/">Privacy</a>
-          <a class="inline-flex items-center gap-1.5 hover:text-ember" href={playStoreUrl} rel="noreferrer" target="_blank">
-            <Icon name="play" size={15} fill="currentColor" strokeWidth={0} />
-            Google Play
-          </a>
-          <a class="inline-flex items-center gap-1.5 hover:text-ember" href={githubUrl} rel="noreferrer" target="_blank">
-            <Icon name="github" size={15} />
-            GitHub
-          </a>
-          <a class="inline-flex items-center gap-1.5 hover:text-ember" href={buyMeCoffeeUrl} rel="noreferrer" target="_blank">
-            <Icon name="coffee" size={15} />
-            Support
-          </a>
+        <div class="footer-links">
+          <div>
+            <strong>Explore</strong>
+            <a href={props.isHome ? "#experience" : "/#experience"}>Experience</a>
+            <a href={props.isHome ? "#formats" : "/#formats"}>Formats</a>
+            <a href={props.isHome ? "#faq" : "/#faq"}>FAQ</a>
+          </div>
+          <div>
+            <strong>Project</strong>
+            <a href={playStoreUrl} target="_blank" rel="noreferrer">Google Play</a>
+            <a href={githubUrl} target="_blank" rel="noreferrer">GitHub</a>
+            <a href={coffeeUrl} target="_blank" rel="noreferrer">Support Kairo</a>
+          </div>
+          <div>
+            <strong>Legal</strong>
+            <a href="/privacy-policy/">Privacy policy</a>
+            <a href={`mailto:${supportEmail}`}>Contact</a>
+          </div>
         </div>
+      </div>
+      <div class="content-wrap footer-bottom">
+        <span>© 2026 Kairo</span>
+        <span>Version 1.1.0 · Android 7.0+</span>
       </div>
     </footer>
   );
 }
 
-function Header(props: { isDark: boolean; isHome: boolean; onToggleTheme: () => void }) {
-  const sectionHref = (hash: string) => (props.isHome ? hash : `/${hash}`);
-
+function SectionHeading(props: { eyebrow: string; title: string; body: string }) {
   return (
-    <header class="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-paper/72 px-5 py-3 backdrop-blur-xl dark:border-white/10 dark:bg-ink/72 sm:px-8 lg:px-10">
-      <nav class="mx-auto flex max-w-7xl items-center justify-between gap-5" aria-label="Primary navigation">
-        <a href="/" class="flex items-center gap-3 text-sm font-semibold">
-          <img src="/assets/kairo-icon.png" alt="" class="h-8 w-8 rounded-lg" />
-          <span>Kairo</span>
-        </a>
-        <div class="hidden items-center gap-6 text-sm font-medium text-ink/62 dark:text-paper/62 md:flex">
-          <a class="hover:text-ember" href={sectionHref("#features")}>Features</a>
-          <a class="hover:text-ember" href={sectionHref("#about")}>About</a>
-          <a class="hover:text-ember" href={sectionHref("#technical")}>Technical</a>
-          <a class="hover:text-ember" href={sectionHref("#coverage")}>Guides</a>
-          <a class="hover:text-ember" href={sectionHref("#faq")}>FAQ</a>
-        </div>
-        <button
-          type="button"
-          onClick={props.onToggleTheme}
-          class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-white/60 text-ink transition hover:border-ember/45 hover:text-ember dark:border-white/10 dark:bg-white/5 dark:text-paper"
-          aria-label={`Switch to ${props.isDark ? "light" : "dark"} theme`}
-        >
-          <Show when={props.isDark} fallback={<Icon name="moon" size={18} />}>
-            <Icon name="sun" size={18} />
-          </Show>
-        </button>
-      </nav>
-    </header>
+    <div class="section-heading">
+      <p class="eyebrow">{props.eyebrow}</p>
+      <h2>{props.title}</h2>
+      <p>{props.body}</p>
+    </div>
   );
 }
 
-function HeroActions() {
+function PhoneFrame(props: { src: string; alt: string; class?: string }) {
   return (
-    <div class="mt-10 max-w-2xl">
-      <div class="grid gap-3 sm:grid-cols-2">
-        <a
-          class="inline-flex min-h-[68px] w-full items-center gap-3 rounded-lg bg-[#111] px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:bg-moss dark:bg-paper dark:text-ink dark:ring-white/10 dark:hover:bg-veil"
-          href={playStoreUrl}
-          rel="noreferrer"
-          target="_blank"
-          aria-label="Get Kairo on Google Play"
-        >
-          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white text-[#111] dark:bg-ink dark:text-paper">
-            <Icon name="play" size={21} fill="currentColor" strokeWidth={0} class="ml-0.5" />
-          </span>
-          <span class="min-w-0">
-            <span class="block text-[0.65rem] font-semibold uppercase leading-none tracking-[0.14em] opacity-72">Get it on</span>
-            <span class="mt-1 block text-lg font-semibold leading-none">Google Play</span>
-          </span>
-        </a>
+    <figure class={`phone-frame ${props.class ?? ""}`.trim()}>
+      <span class="phone-speaker" aria-hidden="true" />
+      <img
+        src={props.src}
+        width="1080"
+        height="1920"
+        alt={props.alt}
+        loading={props.class?.includes("hero-phone") ? "eager" : "lazy"}
+      />
+    </figure>
+  );
+}
 
-        <a
-          class="inline-flex min-h-[68px] w-full items-center gap-3 rounded-lg border border-moss/30 bg-moss px-4 py-3 text-left text-white shadow-soft ring-1 ring-black/10 transition hover:-translate-y-0.5 hover:bg-ink dark:border-white/10 dark:bg-white/10 dark:text-paper dark:hover:bg-white/[0.15]"
-          href={githubUrl}
-          rel="noreferrer"
-          target="_blank"
-          aria-label="Contribute to Kairo on GitHub"
-        >
-          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white/15 text-white ring-1 ring-white/20 dark:bg-paper dark:text-ink">
-            <Icon name="github" size={20} />
-          </span>
-          <span class="min-w-0">
-            <span class="block text-[0.65rem] font-semibold uppercase leading-none tracking-[0.14em] opacity-72">Want to contribute?</span>
-            <span class="mt-1 block text-lg font-semibold leading-none">View on GitHub</span>
-          </span>
-        </a>
+function BionicSample() {
+  const words = ["Reading", "should", "feel", "intentional.", "Context", "creates", "momentum."];
+
+  return (
+    <div class="bionic-sample" aria-label="Example of Bionic Reading with emphasised word beginnings">
+      <div class="bionic-progress">
+        <span />
       </div>
-
-      <div class="mt-4 flex flex-wrap items-center gap-2">
-        <a
-          class="inline-flex items-center gap-2 rounded-full border border-ink/12 px-4 py-2 text-sm font-semibold text-ink/70 transition hover:border-ember/50 hover:text-ember dark:border-white/12 dark:text-paper/70 dark:hover:border-ember/70"
-          href="#features"
-        >
-          Explore features
-          <Icon name="arrowRight" size={15} />
-        </a>
-        <a
-          class="inline-flex items-center gap-2 rounded-full border border-ink/12 px-4 py-2 text-sm font-semibold text-ink/70 transition hover:border-ember/50 hover:text-ember dark:border-white/12 dark:text-paper/70 dark:hover:border-ember/70"
-          href="#technical"
-        >
-          <Icon name="layers" size={15} />
-          Technical notes
-        </a>
-        <a
-          class="inline-flex items-center gap-2 rounded-full border border-[#191611]/10 bg-[#ffdd00] px-4 py-2 text-sm font-semibold text-[#191611] shadow-sm ring-1 ring-white/35 transition hover:-translate-y-0.5 hover:bg-[#f6d700]"
-          href={buyMeCoffeeUrl}
-          rel="noreferrer"
-          target="_blank"
-        >
-          <Icon name="coffee" size={15} />
-          Buy me a coffee
-        </a>
+      <p>
+        <For each={words}>
+          {(word) => {
+            const split = Math.max(1, Math.ceil(word.length * 0.45));
+            return <><strong>{word.slice(0, split)}</strong>{word.slice(split)}{" "}</>;
+          }}
+        </For>
+      </p>
+      <div class="bionic-controls" aria-hidden="true">
+        <span>‹</span>
+        <span><Icon name="play" /></span>
+        <span>›</span>
       </div>
     </div>
   );
 }
 
-function FeatureVisual(props: { feature: (typeof features)[number]; index: number }) {
+function PlayButton() {
   return (
-    <div class="relative flex h-full min-h-[460px] items-center justify-center overflow-hidden rounded-lg border border-ink/10 bg-veil/60 p-5 dark:border-white/10 dark:bg-white/[0.035]">
-      <div class="absolute inset-x-0 top-0 flex justify-between px-5 py-4 text-xs font-semibold uppercase tracking-[0.18em] text-ink/42 dark:text-paper/38">
-        <span>Reading path</span>
-        <span>0{props.index + 1}</span>
-      </div>
-      <div class="feature-device w-full max-w-[420px]">
-        <div class="mb-6 flex items-center justify-between">
-          <div>
-            <p class="text-sm font-semibold text-ember">{props.feature.eyebrow}</p>
-            <p class="mt-1 text-2xl font-semibold">{props.feature.metric}</p>
-          </div>
-          <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-ink text-paper dark:bg-paper dark:text-ink">
-            <Show when={props.index === 0} fallback={<Icon name="gauge" size={20} />}>
-              <Icon name="book" size={20} />
-            </Show>
-          </div>
-        </div>
-        <div class="space-y-3">
-          <div class="h-3 w-5/6 rounded-full bg-ink/15 dark:bg-white/16" />
-          <div class="h-3 w-2/3 rounded-full bg-ink/10 dark:bg-white/12" />
-          <div class="h-3 w-4/5 rounded-full bg-ink/10 dark:bg-white/12" />
-        </div>
-        <div class="my-10 flex items-center justify-center gap-2">
-          <span class="h-px w-24 bg-ink/15 dark:bg-white/15" />
-          <span class="rounded-full bg-ember px-4 py-2 text-lg font-semibold text-white">{props.feature.eyebrow}</span>
-          <span class="h-px w-24 bg-ink/15 dark:bg-white/15" />
-        </div>
-        <p class="font-serif text-2xl leading-9 text-ink/72 dark:text-paper/68">{props.feature.title}</p>
-      </div>
-    </div>
+    <a class="play-button" href={playStoreUrl} target="_blank" rel="noreferrer" aria-label="Get Kairo on Google Play">
+      <span class="play-icon"><Icon name="play" /></span>
+      <span>
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </span>
+    </a>
   );
 }
 
-function Stat(props: { label: string; value: string }) {
-  return (
-    <div>
-      <dt class="text-xs font-semibold uppercase tracking-[0.16em] text-ink/42 dark:text-paper/40">{props.label}</dt>
-      <dd class="mt-2 text-sm font-semibold sm:text-base">{props.value}</dd>
-    </div>
-  );
-}
-
-function TechMetric(props: { icon: IconName; label: string; value: string }) {
-  return (
-    <div class="rounded-lg border border-ink/10 bg-white/58 p-5 dark:border-white/10 dark:bg-white/[0.04]">
-      <div class="mb-5 flex h-10 w-10 items-center justify-center rounded-lg bg-ink text-paper dark:bg-paper dark:text-ink">
-        <Icon name={props.icon} size={20} />
-      </div>
-      <h3 class="font-semibold">{props.label}</h3>
-      <p class="mt-3 text-sm leading-6 text-ink/62 dark:text-paper/60">{props.value}</p>
-    </div>
-  );
-}
-
-type IconName =
-  | "arrowRight"
-  | "book"
-  | "brain"
-  | "check"
-  | "coffee"
-  | "gauge"
-  | "github"
-  | "layers"
-  | "moon"
-  | "play"
-  | "sparkles"
-  | "sun"
-  | "timer";
-
-type IconNode =
-  | { tag: "path"; d: string }
-  | { tag: "circle"; cx: number; cy: number; r: number }
-  | { tag: "line"; x1: number; x2: number; y1: number; y2: number };
-
-const iconNodes: Record<IconName, readonly IconNode[]> = {
-  arrowRight: [
-    { tag: "path", d: "M5 12h14" },
-    { tag: "path", d: "m12 5 7 7-7 7" },
-  ],
-  book: [
-    { tag: "path", d: "M12 7v14" },
-    { tag: "path", d: "M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" },
-  ],
-  brain: [
-    { tag: "path", d: "M12 18V5" },
-    { tag: "path", d: "M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" },
-    { tag: "path", d: "M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" },
-    { tag: "path", d: "M17.997 5.125a4 4 0 0 1 2.526 5.77" },
-    { tag: "path", d: "M18 18a4 4 0 0 0 2-7.464" },
-    { tag: "path", d: "M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" },
-    { tag: "path", d: "M6 18a4 4 0 0 1-2-7.464" },
-    { tag: "path", d: "M6.003 5.125a4 4 0 0 0-2.526 5.77" },
-  ],
-  check: [
-    { tag: "path", d: "M20 6 9 17l-5-5" },
-  ],
-  coffee: [
-    { tag: "path", d: "M10 2v2" },
-    { tag: "path", d: "M14 2v2" },
-    { tag: "path", d: "M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1" },
-    { tag: "path", d: "M6 2v2" },
-  ],
-  gauge: [
-    { tag: "path", d: "m12 14 4-4" },
-    { tag: "path", d: "M3.34 19a10 10 0 1 1 17.32 0" },
-  ],
-  github: [
-    { tag: "path", d: "M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.5-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" },
-    { tag: "path", d: "M9 18c-4.51 2-5-2-7-2" },
-  ],
-  layers: [
-    { tag: "path", d: "M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" },
-    { tag: "path", d: "M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" },
-    { tag: "path", d: "M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" },
-  ],
-  moon: [
-    { tag: "path", d: "M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" },
-  ],
-  play: [
-    { tag: "path", d: "M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" },
-  ],
-  sparkles: [
-    { tag: "path", d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" },
-    { tag: "path", d: "M20 2v4" },
-    { tag: "path", d: "M22 4h-4" },
-    { tag: "circle", cx: 4, cy: 20, r: 2 },
-  ],
-  sun: [
-    { tag: "circle", cx: 12, cy: 12, r: 4 },
-    { tag: "path", d: "M12 2v2" },
-    { tag: "path", d: "M12 20v2" },
-    { tag: "path", d: "m4.93 4.93 1.41 1.41" },
-    { tag: "path", d: "m17.66 17.66 1.41 1.41" },
-    { tag: "path", d: "M2 12h2" },
-    { tag: "path", d: "M20 12h2" },
-    { tag: "path", d: "m6.34 17.66-1.41 1.41" },
-    { tag: "path", d: "m19.07 4.93-1.41 1.41" },
-  ],
-  timer: [
-    { tag: "line", x1: 10, x2: 14, y1: 2, y2: 2 },
-    { tag: "line", x1: 12, x2: 15, y1: 14, y2: 11 },
-    { tag: "circle", cx: 12, cy: 14, r: 8 },
-  ],
-};
-
-function Icon(props: { name: IconName; size?: number; class?: string; fill?: "none" | "currentColor"; strokeWidth?: number }) {
-  const size = () => props.size ?? 18;
-  const fill = () => props.fill ?? "none";
-  const strokeWidth = () => props.strokeWidth ?? 2;
+function Icon(props: { name: IconName }) {
+  const paths: Record<IconName, string> = {
+    arrow: "M5 12h14m-6-6 6 6-6 6",
+    book: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5zm0 0V6.5M8 7h8",
+    check: "m5 12 4 4L19 6",
+    coffee: "M5 8h12v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4zm12 2h1a3 3 0 0 1 0 6h-1M8 3v2m4-2v2",
+    focus: "M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3m0 8v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3m9-8v8m-4-4h8",
+    github: "M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5a5.4 5.4 0 0 0-1-3.5A5 5 0 0 0 19 2s-1 0-3 1.5a13.4 13.4 0 0 0-8 0C6 2 5 2 5 2a5 5 0 0 0 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5A4.8 4.8 0 0 0 9 18v4m0-4c-4.5 2-5-2-7-2",
+    menu: "M4 7h16M4 12h16M4 17h16",
+    moon: "M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z",
+    play: "m7 4 13 8-13 8z",
+    shield: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zm-3-10 2 2 4-4",
+    sun: "M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4m0-12.8L17 7M7 17l-1.4 1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z",
+    timer: "M9 2h6m-3 4a8 8 0 1 0 8 8m-8-3v3l2 2",
+    x: "M6 6l12 12M18 6 6 18",
+  };
 
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size()}
-      height={size()}
-      viewBox="0 0 24 24"
-      fill={fill()}
-      stroke="currentColor"
-      stroke-width={strokeWidth()}
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      class={props.class}
-      aria-hidden="true"
-    >
-      <For each={iconNodes[props.name]}>{(node) => <IconShape node={node} />}</For>
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d={paths[props.name]} />
     </svg>
   );
 }
 
-function IconShape(props: { node: IconNode }) {
-  switch (props.node.tag) {
-    case "circle":
-      return <circle cx={props.node.cx} cy={props.node.cy} r={props.node.r} />;
-    case "line":
-      return <line x1={props.node.x1} x2={props.node.x2} y1={props.node.y1} y2={props.node.y2} />;
-    case "path":
-      return <path d={props.node.d} />;
-  }
+function appPathFor(pathname: string) {
+  const normalized = normalizePath(pathname);
+  return appRoutePaths.has(normalized) ? normalized : undefined;
+}
+
+function scrollToRouteTarget(hash: string) {
+  window.requestAnimationFrame(() => {
+    if (!hash) {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      return;
+    }
+    const rawId = hash.slice(1);
+    let id = rawId;
+    try {
+      id = decodeURIComponent(rawId);
+    } catch {
+      id = rawId;
+    }
+    document.getElementById(id)?.scrollIntoView({ block: "start", behavior: "auto" });
+  });
+}
+
+function syncPageMetadata(route: SeoRoute, canonicalUrl: string) {
+  document.title = route.title;
+  setMeta("name", "description", route.description);
+  setMeta("name", "keywords", typeof route.keywords === "string" ? route.keywords : route.keywords.join(", "));
+  setMeta("property", "og:title", route.title);
+  setMeta("property", "og:description", route.description);
+  setMeta("property", "og:url", canonicalUrl);
+  setMeta("name", "twitter:title", route.title);
+  setMeta("name", "twitter:description", route.description);
+  document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute("href", canonicalUrl);
+}
+
+function setMeta(attribute: "name" | "property", value: string, content: string) {
+  document.querySelector<HTMLMetaElement>(`meta[${attribute}="${value}"]`)?.setAttribute("content", content);
 }
 
 export default App;
