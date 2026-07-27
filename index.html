@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kairo RSVP Reader for Android EPUB and MOBI Books</title>
+    <title>Kairo: Focused RSVP and Bionic Reader for Android</title>
     <meta
       name="description"
-      content="Kairo is an Android RSVP reader for EPUB and MOBI books, with calm speed reading, ORP highlighting, bookmarks, and adaptive pacing."
+      content="Read EPUB, PDF, DOCX and more with Kairo for Android. Move between a calm reader, adaptive RSVP and Bionic Reading while your data stays local."
     />
     <meta
       name="keywords"
-      content="RSVP reading app, Android RSVP reader, speed reading app, calm reader, focus reading, EPUB speed reading, MOBI reader, ORP highlighting"
+      content="Kairo reader, Android RSVP reader, Bionic Reading app, speed reading app, EPUB reader, PDF reader, DOCX reader, local ebook reader"
     />
     <meta name="robots" content="index,follow,max-image-preview:large" />
-    <meta name="theme-color" content="#10120f" />
+    <meta name="theme-color" content="#071011" />
     <script>
       (() => {
         let theme = "dark";
@@ -31,7 +31,7 @@
         const themeColor = document.querySelector('meta[name="theme-color"]');
 
         if (themeColor) {
-          themeColor.content = theme === "dark" ? "#10120f" : "#f7f3eb";
+          themeColor.content = theme === "dark" ? "#071011" : "#f4f6f3";
         }
       })();
     </script>
@@ -40,19 +40,19 @@
     <link rel="apple-touch-icon" href="/assets/kairo-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Kairo RSVP Reader" />
-    <meta property="og:title" content="Kairo RSVP Reader for Android EPUB and MOBI Books" />
+    <meta property="og:site_name" content="Kairo Reader" />
+    <meta property="og:title" content="Kairo: Focused RSVP and Bionic Reader for Android" />
     <meta
       property="og:description"
-      content="Kairo is an Android RSVP reader for EPUB and MOBI books, with calm speed reading, ORP highlighting, bookmarks, and adaptive pacing."
+      content="Read EPUB, PDF, DOCX and more with Kairo for Android. Move between a calm reader, adaptive RSVP and Bionic Reading while your data stays local."
     />
     <meta property="og:url" content="https://kairoreader.com/" />
     <meta property="og:image" content="https://kairoreader.com/assets/kairo-logo.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Kairo RSVP Reader for Android EPUB and MOBI Books" />
+    <meta name="twitter:title" content="Kairo: Focused RSVP and Bionic Reader for Android" />
     <meta
       name="twitter:description"
-      content="Kairo is an Android RSVP reader for EPUB and MOBI books, with calm speed reading, ORP highlighting, bookmarks, and adaptive pacing."
+      content="Read EPUB, PDF, DOCX and more with Kairo for Android. Move between a calm reader, adaptive RSVP and Bionic Reading while your data stays local."
     />
     <script type="application/ld+json">
       {
@@ -62,9 +62,9 @@
             "@type": "WebSite",
             "@id": "https://kairoreader.com/#website",
             "url": "https://kairoreader.com/",
-            "name": "Kairo RSVP Reader",
-            "description": "Kairo is an Android RSVP reader for EPUB and MOBI books, with calm speed reading, ORP highlighting, bookmarks, and adaptive pacing.",
-            "inLanguage": "en"
+            "name": "Kairo Reader",
+            "description": "The official website for Kairo, a focused Android reader with RSVP and Bionic Reading.",
+            "inLanguage": "en-GB"
           },
           {
             "@type": ["MobileApplication", "SoftwareApplication"],
@@ -74,27 +74,29 @@
             "installUrl": "https://play.google.com/store/apps/details?id=com.kairo.reader",
             "sameAs": [
               "https://play.google.com/store/apps/details?id=com.kairo.reader",
-              "https://github.com/Steadyx/Kairo",
-              "https://buymeacoffee.com/kairoapp"
+              "https://github.com/Steadyx/Kairo"
             ],
             "image": "https://kairoreader.com/assets/kairo-logo.png",
+            "screenshot": [
+              "https://kairoreader.com/assets/screens/library.webp",
+              "https://kairoreader.com/assets/screens/reader-controls.webp",
+              "https://kairoreader.com/assets/screens/rsvp.webp"
+            ],
             "operatingSystem": "Android 7.0 and newer",
+            "softwareVersion": "1.1.0",
             "applicationCategory": "EducationalApplication",
-            "description": "Android RSVP reading app for DRM-free EPUB and MOBI books, with ORP highlighting, adaptive pacing, bookmarks, progress, and focus mode.",
+            "description": "A local-first Android reader for ebooks and documents with a standard reader, adaptive RSVP, Bionic Reading, bookmarks, themes and focus controls.",
             "offers": {
               "@type": "Offer",
               "price": "0",
               "priceCurrency": "USD"
             },
             "featureList": [
-              "RSVP speed reading",
-              "RSVP reading app for Android",
-              "ORP highlighting",
-              "EPUB and MOBI import",
-              "Adaptive pacing",
-              "Bookmarks and reading progress",
-              "Focus mode",
-              "Language-aware tokenization"
+              "EPUB, MOBI, PRC, AZW, FB2, PDF, DOCX, TXT, Markdown and HTML import",
+              "Adaptive RSVP reading with ORP highlighting",
+              "Bionic Reading with timed text chunks",
+              "Local library, bookmarks and reading progress",
+              "Focus mode and low-glare themes"
             ]
           }
         ]

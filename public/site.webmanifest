@@ -1,11 +1,11 @@
 {
-  "name": "Kairo RSVP Reader",
+  "name": "Kairo Reader",
   "short_name": "Kairo",
-  "description": "An RSVP reading app for Android with calm speed reading, EPUB and MOBI import, ORP highlighting, and focus reading.",
+  "description": "A focused Android reader for ebooks and documents with adaptive RSVP, Bionic Reading and local progress.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#10120f",
-  "theme_color": "#10120f",
+  "background_color": "#071011",
+  "theme_color": "#071011",
   "icons": [
     {
       "src": "/assets/kairo-icon.png",

@@ -24,209 +24,279 @@ export type SeoRoute = {
   keywords: string | readonly string[];
 };
 
-export const homeSeo = {
+export const homeSeo: SeoRoute = {
   path: "/",
-  title: "Kairo RSVP Reader for Android EPUB and MOBI Books",
+  title: "Kairo: Focused RSVP and Bionic Reader for Android",
   description:
-    "Kairo is an Android RSVP reader for EPUB and MOBI books, with calm speed reading, ORP highlighting, bookmarks, and adaptive pacing.",
-  keywords:
-    "RSVP reading app, Android RSVP reader, speed reading app, calm reader, focus reading, EPUB speed reading, MOBI reader, ORP highlighting",
+    "Read EPUB, PDF, DOCX and more with Kairo for Android. Move between a calm reader, adaptive RSVP and Bionic Reading while your data stays local.",
+  keywords: [
+    "Kairo reader",
+    "Android RSVP reader",
+    "Bionic Reading app",
+    "speed reading app",
+    "EPUB reader",
+    "PDF reader",
+    "DOCX reader",
+    "local ebook reader",
+  ],
 };
 
 export const privacyPolicySeo: SeoRoute = {
   path: "/privacy-policy/",
-  title: "Kairo Privacy Policy for Android RSVP Reader and Book Imports",
+  title: "Privacy Policy for the Kairo Android Reading App",
   description:
-    "Read Kairo's privacy policy for Android book imports, local reading progress, backups, privacy inquiries, and Google Play requirements.",
-  keywords: ["Kairo privacy policy", "Kairo RSVP Reader privacy", "Android reading app privacy", "Google Play privacy policy"],
+    "How Kairo handles imported books, reading progress, preferences, Android backup, Play updates and support messages while keeping reading data local.",
+  keywords: ["Kairo privacy policy", "Android reader privacy", "local reading data", "Kairo app data"],
 };
 
 export const seoPages: readonly SeoPage[] = [
   {
     path: "/rsvp-reading-app/",
-    navLabel: "RSVP reading app",
-    eyebrow: "RSVP reading app",
-    title: "RSVP Reading App for Android EPUB and MOBI Books | Kairo",
+    navLabel: "RSVP reading",
+    eyebrow: "Focused speed",
+    title: "RSVP Reading App for Android Books and Documents | Kairo",
     description:
-      "Kairo turns EPUB and MOBI books into calm RSVP reading sessions on Android, with ORP highlighting, adaptive pacing, bookmarks, and progress.",
-    heading: "RSVP reading app for Android books.",
+      "Use adaptive RSVP reading with your own EPUB, PDF, DOCX and text files. Kairo adds ORP focus, natural pauses, profiles and local progress.",
+    heading: "RSVP reading that respects the shape of a sentence.",
     summary:
-      "Kairo is built around Rapid Serial Visual Presentation, so RSVP reading is not a hidden bonus mode. It is the main reading flow for people who want focused speed reading from their own ebooks.",
-    keywords: ["RSVP reading app", "RSVP reader", "speed reading app", "Android reading app", "word-by-word reader"],
+      "Kairo is an RSVP-first Android reader for people who want forward momentum without frantic word flashing. Start from the exact point you are reading, then let adaptive timing handle the rhythm.",
+    keywords: ["RSVP reading app", "Android RSVP reader", "speed reading app", "rapid serial visual presentation"],
     sections: [
       {
-        title: "What an RSVP reading app should do",
+        title: "More than a fixed words-per-minute counter",
         body:
-          "A useful RSVP reading app keeps words anchored in one place, reduces eye movement, and gives the reader enough control to stay comfortable. Kairo adds punctuation-aware timing, sentence flow, long-word holds, and reading profiles so the pace feels deliberate rather than frantic.",
+          "Kairo adjusts frame timing for punctuation, word length, syllables, clauses, paragraphs and difficult words. That extra breathing room helps prose retain its cadence as the base speed rises.",
       },
       {
-        title: "Built for books, not only pasted text",
+        title: "A stable place for your eyes",
         body:
-          "Many RSVP tools are simple text boxes. Kairo is also an Android ebook reader, so you can import DRM-free EPUB and MOBI files, keep bookmarks, resume progress, and move between normal reading and RSVP reading without losing your place.",
+          "Words are positioned around their optimal recognition point, with an optional highlighted pivot and alignment guides. Peripheral context cues can show nearby words without pulling focus away from the reading band.",
       },
       {
-        title: "Calm speed reading on Android",
+        title: "Begin inside the book, not in a paste box",
         body:
-          "Kairo is designed for readers who want speed without visual stress. Low-glare themes, focus mode, ORP guidance, and adaptive pacing help keep reading steady when you are working through fiction, study material, or long-form documents.",
+          "Import a supported ebook or document, read with full context, tap the word you want, and start RSVP from there. Progress and bookmarks stay connected to the same local book.",
       },
     ],
-    highlights: ["RSVP-first reading mode", "EPUB and MOBI import", "ORP highlighting", "Adaptive speed profiles"],
-    related: ["/android-rsvp-reader/", "/calm-speed-reading-app/", "/orp-highlighting/"],
+    highlights: ["Adaptive punctuation timing", "ORP focus and guides", "Seven built-in profiles", "Phrase replay and context cues"],
+    related: ["/orp-highlighting/", "/calm-speed-reading-app/", "/android-rsvp-reader/"],
   },
   {
     path: "/android-rsvp-reader/",
-    navLabel: "Android RSVP reader",
-    eyebrow: "Android reader",
-    title: "Android RSVP Reader for EPUB, MOBI, and Focus | Kairo",
+    navLabel: "Android reader",
+    eyebrow: "One reading flow",
+    title: "Android RSVP Reader for EPUB, PDF, DOCX and More | Kairo",
     description:
-      "Use Kairo as an Android RSVP reader for DRM-free EPUB and MOBI books, with local progress, bookmarks, focus mode, and calm profiles.",
-    heading: "An Android RSVP reader for your own books.",
+      "Kairo is a native Android reader with a local library, standard reading, RSVP, Bionic Reading, bookmarks, themes and ten supported formats.",
+    heading: "A native Android reader built around focus.",
     summary:
-      "Kairo combines an Android ebook reader with an RSVP reader, giving you a normal reading surface and a focused word-by-word mode in one local-first app.",
-    keywords: ["Android RSVP reader", "Android ebook reader", "RSVP Android", "EPUB reader Android", "MOBI reader Android"],
+      "Kairo brings your library, normal reading and timed reading into one deliberate workflow. It runs on Android 7.0 and newer, stores reading state locally and is free to use.",
+    keywords: ["Android RSVP reader", "Android ebook reader", "focus reading app", "offline reader Android"],
     sections: [
       {
-        title: "Read normally, then switch into RSVP",
+        title: "Library, reader and acceleration in one app",
         body:
-          "Kairo keeps the transition short: import a book, browse chapters, read in a quiet scrollable view, then launch RSVP from the same reading position. The app is designed for switching modes without rebuilding your session from scratch.",
+          "Browse covers and progress, open a chapter in the standard reader, then move into RSVP or Bionic Reading from your current focus word. You do not need to export text or rebuild your place.",
       },
       {
-        title: "Local-first reading state",
+        title: "Designed for Android, down to the controls",
         body:
-          "Progress, bookmarks, preferences, and imported book data stay on the device. That matters for readers who want an Android reading app that feels private, predictable, and usable offline.",
+          "Kairo uses native Jetpack Compose surfaces for document picking, navigation, themes, brightness, typography and focus options. Flexible Play updates can notify you without interrupting a reading session.",
       },
       {
-        title: "Android-native reading controls",
+        title: "Private by architecture",
         body:
-          "Kairo uses native Android surfaces and tuning for focus reading, brightness, typography, pacing, and RSVP controls. The result is closer to a dedicated reader than a generic web widget wrapped in an app.",
+          "Imported content, bookmarks, reading positions and preferences are kept in app-private storage. Kairo has no account system, ads or analytics SDKs, and reading works without a Kairo cloud service.",
       },
     ],
-    highlights: ["Native Android app", "Reader plus RSVP mode", "Local progress and bookmarks", "Offline-friendly library"],
-    related: ["/rsvp-reading-app/", "/mobi-epub-reader-android/", "/epub-speed-reading-app/"],
+    highlights: ["Android 7.0+", "Native Jetpack Compose UI", "Local books and progress", "No account, ads or analytics"],
+    related: ["/rsvp-reading-app/", "/supported-formats/", "/bionic-reading-app/"],
   },
   {
     path: "/epub-speed-reading-app/",
     navLabel: "EPUB speed reading",
-    eyebrow: "EPUB speed reading",
-    title: "EPUB Speed Reading App for Android Books | Kairo",
+    eyebrow: "Books in motion",
+    title: "EPUB Speed Reading App with RSVP and Bionic Modes | Kairo",
     description:
-      "Speed read DRM-free EPUB books on Android with Kairo's RSVP mode, adaptive pacing, chapter context, bookmarks, and reading profiles.",
-    heading: "Speed read EPUB books with RSVP pacing.",
+      "Import DRM-free EPUB books on Android, keep chapter context and images, then read faster with adaptive RSVP or Bionic Reading in Kairo.",
+    heading: "Move through EPUB books without losing your place.",
     summary:
-      "Kairo gives EPUB readers a focused speed reading path without giving up normal chapter navigation, progress, bookmarks, and reading context.",
-    keywords: ["EPUB speed reading app", "EPUB RSVP reader", "EPUB reader Android", "speed read EPUB", "ebook speed reading"],
+      "Kairo treats an EPUB as a book, not a disposable stream of pasted words. Covers, chapters, inline images, progress and bookmarks remain part of the experience when you accelerate.",
+    keywords: ["EPUB speed reading app", "EPUB RSVP reader", "Android EPUB reader", "Bionic Reading EPUB"],
     sections: [
       {
-        title: "EPUB import with reading context",
+        title: "Keep the structure of the book",
         body:
-          "Kairo parses EPUB books into chapters, preserves useful reading structure, and keeps the library local. You can use the standard reader for context and move into RSVP mode when you want focused momentum.",
+          "Kairo extracts available cover art and metadata, follows the EPUB spine, preserves useful chapter boundaries and renders inline images in the standard reader.",
       },
       {
-        title: "Adaptive timing for real prose",
+        title: "Start faster reading from any word",
         body:
-          "Books are not flat streams of words. Kairo shapes RSVP timing around punctuation, phrase rhythm, longer words, page breaks, and paragraph breathing so EPUB speed reading stays readable.",
+          "Tap or recenter the focus word, then launch RSVP or Bionic Reading from that position. When you return, the app keeps the book, chapter and reading state connected.",
       },
       {
-        title: "For study, fiction, and long-form reading",
+        title: "Tune the experience, not the source file",
         body:
-          "The built-in profiles let you choose a slower study rhythm, a more natural narrative cadence, or a faster sprint mode. That makes EPUB speed reading useful for different material rather than one fixed pace.",
+          "Reader themes, text brightness, font size, RSVP profiles and focus controls are reusable preferences. You can change the rhythm without modifying or uploading your EPUB.",
       },
     ],
-    highlights: ["EPUB import", "Chapter-aware reading", "Paragraph and page-break pauses", "Study and sprint profiles"],
-    related: ["/rsvp-reading-app/", "/android-rsvp-reader/", "/calm-speed-reading-app/"],
+    highlights: ["DRM-free EPUB import", "Chapter and image support", "Reader-to-RSVP handoff", "Local bookmarks and progress"],
+    related: ["/supported-formats/", "/rsvp-reading-app/", "/bionic-reading-app/"],
   },
   {
     path: "/orp-highlighting/",
     navLabel: "ORP highlighting",
-    eyebrow: "ORP highlighting",
-    title: "ORP Highlighting for Calm RSVP Speed Reading | Kairo",
+    eyebrow: "Visual anchor",
+    title: "ORP Highlighting for Clearer RSVP Speed Reading | Kairo",
     description:
-      "Kairo uses ORP highlighting to anchor words around the optimal recognition point, making RSVP speed reading calmer and easier to follow.",
-    heading: "ORP highlighting for steadier RSVP reading.",
+      "Learn how Kairo uses optimal recognition point highlighting, stable alignment and optional context cues to make RSVP reading easier to track.",
+    heading: "Keep the word moving. Keep your eyes steady.",
     summary:
-      "Optimal Recognition Point guidance helps keep your eyes anchored while words change. Kairo uses that idea as part of a calmer RSVP reading system.",
-    keywords: ["ORP highlighting", "optimal recognition point", "RSVP reading", "speed reading focus point", "word recognition"],
+      "The optimal recognition point is the part of a word your eyes tend to recognise most efficiently. Kairo can align and highlight that pivot so each new word lands in a more consistent place.",
+    keywords: ["ORP highlighting", "optimal recognition point", "RSVP focus point", "speed reading pivot letter"],
     sections: [
       {
-        title: "Why ORP matters",
+        title: "Why words shift during basic RSVP",
         body:
-          "In RSVP reading, words appear in one focal area. ORP highlighting marks the point in a word that is usually fastest to recognize, reducing the amount of visual adjustment between words.",
+          "Centred words have different lengths, so their useful recognition point moves from frame to frame. ORP alignment offsets each word around a stable pivot instead of centring every word by its outer edges.",
       },
       {
-        title: "Guidance without clutter",
+        title: "Guidance you can control",
         body:
-          "Kairo keeps ORP guidance visible when it helps and pairs it with a low-distraction reading surface. The goal is to support recognition without turning the reading screen into a control panel.",
+          "Kairo can colour the pivot letter and show subtle horizontal guides around the focus band. Both are optional, so the screen can be as instructive or as quiet as you prefer.",
       },
       {
-        title: "Paired with adaptive pacing",
+        title: "A visual system paired with natural timing",
         body:
-          "ORP highlighting is only one part of readability. Kairo also adjusts timing for word length, punctuation, complexity, and pauses so the highlighted point has a rhythm that feels natural.",
+          "Stable alignment helps recognition, while adaptive holds make room for punctuation and complexity. Kairo combines both rather than asking a single visual trick to carry the whole reading experience.",
       },
     ],
-    highlights: ["Optimal recognition point", "Visual anchoring", "Focused word display", "Low-distraction guide controls"],
-    related: ["/rsvp-reading-app/", "/calm-speed-reading-app/", "/epub-speed-reading-app/"],
+    highlights: ["Pivot-letter highlight", "Stable word alignment", "Optional guide lines", "Peripheral context assist"],
+    related: ["/rsvp-reading-app/", "/calm-speed-reading-app/", "/android-rsvp-reader/"],
   },
   {
     path: "/calm-speed-reading-app/",
     navLabel: "Calm speed reading",
-    eyebrow: "Calm speed reading",
-    title: "Calm Speed Reading App for Focused Android Reading | Kairo",
+    eyebrow: "Speed without chaos",
+    title: "A Calm Speed Reading App for Focused Android Reading | Kairo",
     description:
-      "Kairo is a calm Android speed reading app with RSVP mode, low-glare themes, ORP guidance, adaptive pacing, and focused reader profiles.",
-    heading: "A calm speed reading app for focused sessions.",
+      "Kairo combines RSVP, Bionic Reading, low-glare themes, focus controls and natural pacing for readers who want speed without visual pressure.",
+    heading: "Reading faster should still feel like reading.",
     summary:
-      "Kairo is designed for readers who want to move faster without making the screen feel rushed, noisy, or visually exhausting.",
-    keywords: ["calm speed reading app", "focus reading app", "speed reading Android", "low distraction reader", "RSVP speed reading"],
+      "Kairo is designed around intentional momentum: enough control to suit the material, enough quiet to stay immersed and no performance theatre competing with the words.",
+    keywords: ["calm speed reading app", "focus reading app", "low distraction reader", "Android speed reading"],
     sections: [
       {
-        title: "Speed without visual pressure",
+        title: "Choose a mode that fits the moment",
         body:
-          "Kairo uses a sparse reading surface, low-glare palettes, and predictable controls so speed reading feels measured. The app is built for concentration rather than novelty.",
+          "Use the standard reader when context matters, RSVP when you want one stable focal point, or Bionic Reading when you want larger text chunks with emphasised word beginnings.",
       },
       {
-        title: "Profiles for different reading moods",
+        title: "Profiles before complexity",
         body:
-          "Balanced, Chill, Narrative, Focus, Flow, Sprint, and Study profiles change the timing shape without forcing every reader into raw settings. You can choose a rhythm that fits the material.",
+          "Balanced, Chill, Narrative, Focus, Flow, Sprint and Study profiles give you useful pacing shapes immediately. Detailed timing and readability controls remain available when you want them.",
       },
       {
-        title: "Useful for attention and reading flow",
+        title: "Make the screen quieter",
         body:
-          "A calm RSVP reading flow can help reduce scanning, backtracking, and visual wandering. Kairo supports that with anchored words, clear progress, bookmarks, and persistent preferences.",
+          "Low-glare themes, independent text brightness, minimal chrome and optional Do Not Disturb integration reduce the things competing with a focused session.",
       },
     ],
-    highlights: ["Low-glare themes", "Focus mode", "Reader profiles", "Predictable controls"],
-    related: ["/rsvp-reading-app/", "/orp-highlighting/", "/android-rsvp-reader/"],
+    highlights: ["Three reading experiences", "Seven RSVP profiles", "Six reader themes", "Optional focus mode"],
+    related: ["/bionic-reading-app/", "/rsvp-reading-app/", "/orp-highlighting/"],
   },
   {
     path: "/mobi-epub-reader-android/",
     navLabel: "MOBI and EPUB",
-    eyebrow: "Book formats",
-    title: "MOBI and EPUB Reader for Android with RSVP Speed Reading | Kairo",
+    eyebrow: "Ebook library",
+    title: "MOBI and EPUB Reader for Android with RSVP | Kairo",
     description:
-      "Read DRM-free MOBI and EPUB books on Android with Kairo, then switch into RSVP speed reading with bookmarks, progress, and ORP guidance.",
-    heading: "A MOBI and EPUB reader with RSVP mode.",
+      "Read DRM-free MOBI, PRC, AZW, EPUB and FB2 ebooks in Kairo, with local progress, bookmarks, a clean reader, RSVP and Bionic Reading.",
+    heading: "Your DRM-free ebooks, in one focused Android library.",
     summary:
-      "Kairo is for readers with their own DRM-free ebook files who want one Android app for normal reading and focused RSVP speed reading.",
-    keywords: ["MOBI EPUB reader Android", "MOBI reader Android", "EPUB reader Android", "ebook reader with RSVP", "DRM-free ebook reader"],
+      "Kairo supports the ebook formats readers already own and keeps the path from file picker to focused reading short. Vendor-locked books remain outside the current parser pipeline.",
+    keywords: ["MOBI EPUB reader Android", "MOBI reader", "EPUB reader", "PRC reader", "AZW reader", "FB2 reader"],
     sections: [
       {
-        title: "Bring DRM-free books into one library",
+        title: "Ebook formats beyond EPUB",
         body:
-          "Kairo imports DRM-free EPUB and MOBI files from Android storage, extracts metadata and covers where available, and keeps your reading state local.",
+          "Kairo reads DRM-free EPUB, MOBI, PRC, AZW, FB2 and FB2.ZIP files. It automatically detects the selected format instead of asking you to choose a parser first.",
       },
       {
-        title: "Use the reading mode that fits",
+        title: "A library that remembers",
         body:
-          "Some passages need context and scrolling. Others are easier to move through with RSVP. Kairo keeps both modes close so a book can move between careful reading and faster focused sessions.",
+          "Available covers and metadata appear alongside completion progress and estimated time remaining. A dedicated bookmarks tab gives saved positions a home outside the reader.",
       },
       {
-        title: "Format support with speed reading intent",
+        title: "Normal reading and focused reading",
         body:
-          "Kairo is not trying to be every document tool at once. It focuses on ebook import, clean chapter reading, bookmarks, progress, and RSVP pacing for readers who want a simpler Android workflow.",
+          "Use chapter navigation and the table of contents when you need the whole page, then launch RSVP or Bionic Reading from the current position when you want stronger momentum.",
       },
     ],
-    highlights: ["DRM-free EPUB", "DRM-free MOBI", "Bookmarks and progress", "RSVP mode for imported books"],
-    related: ["/android-rsvp-reader/", "/epub-speed-reading-app/", "/rsvp-reading-app/"],
+    highlights: ["EPUB, MOBI, PRC and AZW", "FB2 and FB2.ZIP", "Automatic format detection", "Cover, progress and bookmark library"],
+    related: ["/supported-formats/", "/epub-speed-reading-app/", "/android-rsvp-reader/"],
+  },
+  {
+    path: "/supported-formats/",
+    navLabel: "Supported formats",
+    eyebrow: "Bring your own files",
+    title: "Kairo Supported Ebook and Document Formats for Android",
+    description:
+      "See every format Kairo 1.1 supports: EPUB, MOBI, PRC, AZW, FB2, PDF, DOCX, TXT, Markdown and HTML, plus current limitations.",
+    heading: "Books, documents and text. One reading workflow.",
+    summary:
+      "Kairo 1.1 automatically detects ten format families selected through Android's document picker. Files are parsed locally and added to the same library.",
+    keywords: ["Kairo supported formats", "EPUB MOBI PDF DOCX reader", "FB2 Android reader", "Markdown reader Android"],
+    sections: [
+      {
+        title: "Ebooks",
+        body:
+          "Supported ebook formats are DRM-free EPUB, MOBI, PRC, AZW, FB2 and FB2.ZIP. Vendor protection and locked ebooks are not supported.",
+      },
+      {
+        title: "Documents",
+        body:
+          "Kairo imports DOCX files and PDFs that contain selectable text. Scanned or image-only PDFs need OCR, which is not part of the current app.",
+      },
+      {
+        title: "Text and web formats",
+        body:
+          "Plain TXT, Markdown (.md and .markdown), HTML and HTM files can join the library too. Kairo turns their text into the same reader, RSVP and Bionic Reading flow.",
+      },
+    ],
+    highlights: ["Ten format families", "Automatic detection", "Local parsing", "Clear DRM and PDF limitations"],
+    related: ["/mobi-epub-reader-android/", "/epub-speed-reading-app/", "/android-rsvp-reader/"],
+  },
+  {
+    path: "/bionic-reading-app/",
+    navLabel: "Bionic Reading",
+    eyebrow: "Chunked focus",
+    title: "Bionic Reading App for Android Books and Documents | Kairo",
+    description:
+      "Use Kairo's Bionic Reading mode with EPUB, PDF, DOCX and more. Emphasised word beginnings, timed chunks and focus controls keep text moving.",
+    heading: "Bionic Reading, connected to the rest of your book.",
+    summary:
+      "Kairo's Bionic Reading mode presents timed chunks with emphasised word beginnings, giving you more surrounding context than single-word RSVP while preserving forward motion.",
+    keywords: ["Bionic Reading app", "Bionic Reading Android", "bold first letters reader", "timed chunk reading"],
+    sections: [
+      {
+        title: "Context in larger pieces",
+        body:
+          "Instead of replacing the whole view with one word, Bionic Reading advances through readable chunks. Word beginnings are emphasised to create visual landmarks across each block.",
+      },
+      {
+        title: "A mode, not a separate import workflow",
+        body:
+          "Choose Bionic Reading from the same launcher as RSVP and begin at the current focus word. It works with the books and documents already in your Kairo library.",
+      },
+      {
+        title: "Tune emphasis and presentation",
+        body:
+          "Fixation strength, highlight strength, font size and text brightness can be adjusted from dedicated settings or the quick controls available during a session.",
+      },
+    ],
+    highlights: ["Timed text chunks", "Emphasised word beginnings", "Adjustable fixation strength", "Shared book progress"],
+    related: ["/calm-speed-reading-app/", "/rsvp-reading-app/", "/supported-formats/"],
   },
 ];
 
