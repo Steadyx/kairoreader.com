@@ -1,5 +1,6 @@
-FROM node:20-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
+RUN npm install --global npm@12
 COPY package*.json ./
 RUN npm ci
 COPY . .
