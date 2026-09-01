@@ -63,3 +63,9 @@ If you prefer direct compose:
 ```bash
 colima nerdctl -- compose -f compose.local.yaml up --build
 ```
+
+## Automated dependency and VPS maintenance
+
+GitHub Actions validates every pull request with Node 24 and npm 12. Dependabot checks npm packages, container base images, and GitHub Actions each Monday. Minor and patch updates merge only after the validation workflow passes; major updates stay open for review.
+
+The production deploy always refreshes its Node and Caddy base images before rebuilding. A separate weekly VPS maintenance workflow applies safe Debian/Ubuntu package upgrades, then rebuilds and health-checks the site. It does not remove packages or reboot the server automatically; held packages and required reboots are reported as workflow warnings for manual review.

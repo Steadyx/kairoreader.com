@@ -3,6 +3,8 @@ set -eu
 
 APP_DIR="${APP_DIR:-$(pwd)}"
 COMPOSE_FILE="${COMPOSE_FILE:-compose.yaml}"
+DOCKERFILE="${DOCKERFILE:-Dockerfile}"
+IMAGE_NAME="${IMAGE_NAME:-kairoreader.com:production}"
 HEALTH_TIMEOUT_SECONDS="${HEALTH_TIMEOUT_SECONDS:-150}"
 
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:${PATH:-}"
@@ -96,6 +98,7 @@ if ! command -v iptables >/dev/null 2>&1; then
 fi
 
 [ -f "$COMPOSE_FILE" ] || fail "missing $COMPOSE_FILE"
+[ -f "$DOCKERFILE" ] || fail "missing $DOCKERFILE"
 
 site_domain="${SITE_DOMAIN:-$(env_value SITE_DOMAIN .env)}"
 acme_email="${ACME_EMAIL:-$(env_value ACME_EMAIL .env)}"
@@ -118,7 +121,7 @@ fi
 printf 'SITE_DOMAIN=%s\nACME_EMAIL=%s\n' "$normalized_domains" "$acme_email" > .env
 
 printf 'Deploying Kairo Reader for %s\n' "$normalized_domains"
-nerdctl_run compose -f "$COMPOSE_FILE" build
+nerdctl_run build --pull=true --file "$DOCKERFILE" --tag "$IMAGE_NAME" .
 nerdctl_run compose -f "$COMPOSE_FILE" down
 nerdctl_run compose -f "$COMPOSE_FILE" up -d
 
