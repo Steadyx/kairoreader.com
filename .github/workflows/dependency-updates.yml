@@ -1,0 +1,94 @@
+name: Dependency updates
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+
+jobs:
+  classify:
+    name: Classify Dependabot update
+    if: >-
+      github.event_name == 'pull_request_target' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: write
+
+    steps:
+      - name: Read Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Mark minor and patch updates for automatic merge
+        if: >-
+          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh label create dependencies-automerge \
+            --repo "$GITHUB_REPOSITORY" \
+            --color 1d76db \
+            --description "Dependabot update that can merge after CI" \
+            --force
+          gh pr edit "$PR_URL" --add-label dependencies-automerge
+
+      - name: Require review for major updates
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr edit "$PR_URL" --remove-label dependencies-automerge || true
+
+  merge:
+    name: Merge validated dependency update
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.pull_requests[0] != null
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Merge eligible Dependabot pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+          VALIDATED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          author="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json author --jq '.author.login')"
+          head_sha="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefOid --jq '.headRefOid')"
+          eligible="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq 'any(.labels[]; .name == "dependencies-automerge")')"
+
+          if [ "$author" != 'dependabot' ] && [ "$author" != 'dependabot[bot]' ] && [ "$author" != 'app/dependabot' ]; then
+            echo "Skipping non-Dependabot pull request #$PR_NUMBER."
+            exit 0
+          fi
+
+          if [ "$head_sha" != "$VALIDATED_SHA" ]; then
+            echo "Skipping pull request #$PR_NUMBER because CI validated an older commit."
+            exit 0
+          fi
+
+          if [ "$eligible" != 'true' ]; then
+            echo "Pull request #$PR_NUMBER requires review."
+            exit 0
+          fi
+
+          gh pr merge "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --squash --delete-branch
