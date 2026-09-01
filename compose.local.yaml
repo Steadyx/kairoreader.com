@@ -3,7 +3,7 @@ services:
     container_name: kairoreader-web
     build:
       context: .
-      dockerfile: Containerfile
+      dockerfile: Dockerfile
     image: kairoreader.com:local
     environment:
       SITE_DOMAIN: :8080

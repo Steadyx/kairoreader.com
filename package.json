@@ -2,6 +2,9 @@
   "name": "kairoreader.com",
   "version": "0.1.0",
   "private": true,
+  "allowScripts": {
+    "esbuild": true
+  },
   "type": "module",
   "scripts": {
     "up": "node scripts/kairo.mjs dev",
@@ -10,8 +13,9 @@
     "dev": "vite --host 0.0.0.0 --port 5173",
     "typecheck": "tsc --noEmit",
     "build": "vite build && vite build --config vite.prerender.config.ts && node scripts/prerender.mjs",
+    "audit:dependencies": "npm audit --audit-level=high",
     "audit:seo": "node scripts/audit-seo.mjs",
-    "deploy:check": "npm run typecheck && npm run build && npm run audit:seo",
+    "deploy:check": "npm run typecheck && npm run audit:dependencies && npm run build && npm run audit:seo",
     "preview": "vite preview --host 0.0.0.0",
     "serve": "node scripts/static-server.mjs",
     "container:build": "node scripts/kairo.mjs container-build",
