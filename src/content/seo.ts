@@ -1,4 +1,6 @@
-export const siteOrigin = "https://kairoreader.com";
+import { siteContent } from "./site";
+
+export const siteOrigin = siteContent.origin;
 
 export type SeoPage = {
   path: string;
@@ -90,7 +92,7 @@ export const seoPages: readonly SeoPage[] = [
       "Kairo is a native Android reader with a local library, standard reading, RSVP, Bionic Reading, bookmarks, themes and ten supported formats.",
     heading: "A native Android reader built around focus.",
     summary:
-      "Kairo brings your library, normal reading and timed reading into one deliberate workflow. It runs on Android 7.0 and newer, stores reading state locally and is free to use.",
+      `${siteContent.brand.name} brings your library, normal reading and timed reading into one deliberate workflow. It runs on ${siteContent.release.platform} ${siteContent.release.minimumPlatformVersion} and newer, stores reading state locally and is free to use.`,
     keywords: ["Android RSVP reader", "Android ebook reader", "focus reading app", "offline reader Android"],
     sections: [
       {
@@ -109,7 +111,7 @@ export const seoPages: readonly SeoPage[] = [
           "Imported content, bookmarks, reading positions and preferences are kept in app-private storage. Kairo has no account system, ads or analytics SDKs, and reading works without a Kairo cloud service.",
       },
     ],
-    highlights: ["Android 7.0+", "Native Jetpack Compose UI", "Local books and progress", "No account, ads or analytics"],
+    highlights: [siteContent.release.platformRequirement, "Native Jetpack Compose UI", "Local books and progress", "No account, ads or analytics"],
     related: ["/rsvp-reading-app/", "/supported-formats/", "/bionic-reading-app/"],
   },
   {
@@ -242,10 +244,10 @@ export const seoPages: readonly SeoPage[] = [
     eyebrow: "Bring your own files",
     title: "Kairo Supported Ebook and Document Formats for Android",
     description:
-      "See every format Kairo 1.1 supports: EPUB, MOBI, PRC, AZW, FB2, PDF, DOCX, TXT, Markdown and HTML, plus current limitations.",
+      `See every format ${siteContent.brand.name} ${siteContent.release.badge} supports: EPUB, MOBI, PRC, AZW, FB2, PDF, DOCX, TXT, Markdown and HTML, plus current limitations.`,
     heading: "Books, documents and text. One reading workflow.",
     summary:
-      "Kairo 1.1 automatically detects ten format families selected through Android's document picker. Files are parsed locally and added to the same library.",
+      `${siteContent.brand.name} ${siteContent.release.badge} automatically detects ten format families selected through Android's document picker. Files are parsed locally and added to the same library.`,
     keywords: ["Kairo supported formats", "EPUB MOBI PDF DOCX reader", "FB2 Android reader", "Markdown reader Android"],
     sections: [
       {
