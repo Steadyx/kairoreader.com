@@ -15,10 +15,10 @@ export function HomePage() {
     <main>
       <HeroSection />
       <ReadingExperienceSection />
-      <FormatsSection />
       <TuningSection />
-      <FeaturesSection />
       <GallerySection />
+      <FeaturesSection />
+      <FormatsSection />
       <PrivacySection />
       <OpenSourceSection />
       <FaqSection />

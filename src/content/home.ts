@@ -73,7 +73,7 @@ export type HomePageContent = {
     eyebrow: string;
     title: string;
     body: string;
-    items: readonly { caption: string; image: ImageContent }[];
+    items: readonly { caption: string; description: string; image: ImageContent }[];
   };
   privacy: {
     icon: IconName;
@@ -113,18 +113,18 @@ export const homeContent = {
   hero: {
     announcement: `${siteContent.brand.name} ${siteContent.release.badge} · Free on ${siteContent.release.platform}`,
     title: {
-      text: "Read at the speed of",
-      emphasis: "thought.",
+      text: "A little more space to",
+      emphasis: "read.",
     },
     lede:
-      "Bring your own books and documents. Read with full context, then shift into adaptive RSVP or Bionic Reading whenever you want more momentum.",
+      "Your books. Your pace. A thoughtful Android reader that lets you settle into a page, find your focus, and keep the world on pause.",
     actions: {
       learnMore: { label: "See how it works", href: "#experience", icon: "arrow" },
       support: { ...siteContent.actions.support, label: "Buy me a coffee" },
     },
     proofAriaLabel: "Kairo highlights",
     proofItems: [
-      { icon: "check", label: "10 format families" },
+      { icon: "check", label: "Free to use" },
       { icon: "shield", label: "Local-first" },
       { icon: "github", label: "Open source" },
     ],
@@ -133,28 +133,28 @@ export const homeContent = {
       {
         position: "back",
         image: {
-          src: "/assets/screens/library.webp",
+          src: "/assets/screens/library-2026.webp",
           alt: "Kairo library with imported books, progress and bookmarks",
-          width: 1080,
-          height: 1920,
+          width: 810,
+          height: 1440,
         },
       },
       {
         position: "middle",
         image: {
-          src: "/assets/screens/reader-controls.webp",
-          alt: "Kairo reader with chapter text and reading controls",
-          width: 1080,
-          height: 1920,
+          src: "/assets/screens/linen-2026.webp",
+          alt: "Kairo reader in the warm linen theme",
+          width: 810,
+          height: 1440,
         },
       },
       {
         position: "front",
         image: {
-          src: "/assets/screens/rsvp.webp",
+          src: "/assets/screens/rsvp-2026.webp",
           alt: "Kairo RSVP screen with a focused word and playback controls",
-          width: 1080,
-          height: 1920,
+          width: 810,
+          height: 1440,
         },
       },
     ],
@@ -174,7 +174,7 @@ export const homeContent = {
   experience: {
     heading: {
       eyebrow: "One continuous reading flow",
-      title: "Change how you read. Not where you are.",
+      title: "Find your reading rhythm.",
       body:
         "Kairo keeps the library, the page and your accelerated reading modes connected. Pick the experience that fits the next passage.",
     },
@@ -188,10 +188,10 @@ export const homeContent = {
         visual: {
           kind: "phone",
           image: {
-            src: "/assets/screens/reader-rsvp-dock.webp",
-            alt: "Kairo standard reader with the RSVP launch control",
-            width: 1080,
-            height: 1920,
+            src: "/assets/screens/linen-2026.webp",
+            alt: "Alice’s Adventures in Wonderland in Kairo’s warm linen reading theme",
+            width: 810,
+            height: 1440,
           },
         },
       },
@@ -204,10 +204,10 @@ export const homeContent = {
         visual: {
           kind: "phone",
           image: {
-            src: "/assets/screens/rsvp.webp",
-            alt: "Kairo RSVP mode showing the word seldom at a stable focal point",
-            width: 1080,
-            height: 1920,
+            src: "/assets/screens/rsvp-2026.webp",
+            alt: "Kairo RSVP mode with a focused word and surrounding sentence context",
+            width: 810,
+            height: 1440,
           },
         },
       },
@@ -229,7 +229,7 @@ export const homeContent = {
   formats: {
     heading: {
       eyebrow: `${siteContent.brand.name} ${siteContent.release.badge} format support`,
-      title: "Your reading list is bigger than one file type.",
+      title: "A home for your whole reading list.",
       body:
         "Choose a supported file from Android storage. Kairo detects it automatically, builds a local library entry and opens the same focused reading toolkit.",
     },
@@ -250,16 +250,16 @@ export const homeContent = {
   },
   tuning: {
     eyebrow: "Power when you want it",
-    title: "Simple on the surface. Remarkably tuneable underneath.",
+    title: "Make yourself comfortable.",
     body:
       "Start with a profile, press play and read. When you want finer control, Kairo exposes the pacing, typography, brightness and focus settings that actually change how a session feels.",
     profilesAriaLabel: "Built-in RSVP profiles",
     profiles: ["Balanced", "Chill", "Narrative", "Focus", "Flow", "Sprint", "Study"],
     image: {
-      src: `/assets/screens/rsvp-settings.webp?v=${siteContent.release.version}`,
+      src: "/assets/screens/speed-2026.webp",
       alt: "Kairo RSVP settings with profile and timing controls",
-      width: 1080,
-      height: 1920,
+      width: 810,
+      height: 1440,
     },
     callouts: [
       { label: "Estimated pace", value: "811 WPM" },
@@ -314,45 +314,69 @@ export const homeContent = {
   gallery: {
     eyebrow: "Inside Kairo",
     title: "A reading interface that gets out of the way.",
-    body: "Near-black surfaces, restrained colour and controls that appear when they are useful.",
+    body: "From your first import to the last page. Explore the little details that make Kairo feel like your own reading space.",
     items: [
       {
-        caption: "Library",
-        image: {
-          src: "/assets/screens/library.webp",
-          alt: "Kairo library showing book covers, progress and navigation tabs",
-          width: 1080,
-          height: 1920,
-        },
+            "caption": "Your library",
+            "description": "All your books, with a place for every next chapter.",
+            "image": {
+                  "src": "/assets/screens/library-2026.webp",
+                  "alt": "Kairo: Your library",
+                  "width": 810,
+                  "height": 1440
+            }
       },
       {
-        caption: "Settings",
-        image: {
-          src: "/assets/screens/settings.webp",
-          alt: "Kairo settings home with RSVP, reader, focus and startup settings",
-          width: 333,
-          height: 592,
-        },
+            "caption": "The reading room",
+            "description": "Warm linen, comfortable type, and room to lose yourself in a book.",
+            "image": {
+                  "src": "/assets/screens/linen-2026.webp",
+                  "alt": "Kairo: The reading room",
+                  "width": 810,
+                  "height": 1440
+            }
       },
       {
-        caption: "Reader themes",
-        image: {
-          src: "/assets/screens/reader-settings.webp",
-          alt: "Kairo reader settings with font, theme, brightness and scrolling options",
-          width: 1080,
-          height: 1920,
-        },
+            "caption": "Find your focus",
+            "description": "One focal point. Your own pace. The surrounding words, still in reach.",
+            "image": {
+                  "src": "/assets/screens/rsvp-2026.webp",
+                  "alt": "Kairo: Find your focus",
+                  "width": 810,
+                  "height": 1440
+            }
       },
       {
-        caption: "Reader controls",
-        image: {
-          src: "/assets/screens/reader-controls.webp",
-          alt: "Kairo book reader with bookmarks, focus mode and table of contents controls",
-          width: 1080,
-          height: 1920,
-        },
+            "caption": "Make it yours",
+            "description": "Tune the type, colours, and brightness to the way you like to read.",
+            "image": {
+                  "src": "/assets/screens/themes-2026.webp",
+                  "alt": "Kairo: Make it yours",
+                  "width": 810,
+                  "height": 1440
+            }
       },
-    ],
+      {
+            "caption": "Keep your place",
+            "description": "Bookmarks and reading tools, always close at hand.",
+            "image": {
+                  "src": "/assets/screens/tools-2026.webp",
+                  "alt": "Kairo: Keep your place",
+                  "width": 810,
+                  "height": 1440
+            }
+      },
+      {
+            "caption": "Bring your books",
+            "description": "Start with the ebooks and documents you already own.",
+            "image": {
+                  "src": "/assets/screens/import-2026.webp",
+                  "alt": "Kairo: Bring your books",
+                  "width": 810,
+                  "height": 1440
+            }
+      }
+],
   },
   privacy: {
     icon: "shield",
