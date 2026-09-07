@@ -34,7 +34,7 @@ function App(props: { initialPath?: string } = {}) {
     document.documentElement.classList.toggle("dark", nextTheme === "dark");
     document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute(
       "content",
-      nextTheme === "dark" ? "#071011" : "#f4f6f3",
+      nextTheme === "dark" ? "#15191f" : "#f6f3ec",
     );
   });
 

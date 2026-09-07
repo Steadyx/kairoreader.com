@@ -1,3 +1,5 @@
+import { onCleanup, onMount } from "solid-js";
+import { mountParallax } from "../lib/parallax";
 import { CoverageSection } from "../components/home/CoverageSection";
 import { FaqSection } from "../components/home/FaqSection";
 import { FeaturesSection } from "../components/home/FeaturesSection";
@@ -11,14 +13,17 @@ import { ReadingExperienceSection } from "../components/home/ReadingExperienceSe
 import { TuningSection } from "../components/home/TuningSection";
 
 export function HomePage() {
+  let main!: HTMLElement;
+  onMount(() => onCleanup(mountParallax(main)));
+
   return (
-    <main>
+    <main ref={main}>
       <HeroSection />
       <ReadingExperienceSection />
-      <FormatsSection />
       <TuningSection />
-      <FeaturesSection />
       <GallerySection />
+      <FeaturesSection />
+      <FormatsSection />
       <PrivacySection />
       <OpenSourceSection />
       <FaqSection />

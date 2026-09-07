@@ -16,7 +16,6 @@ export function HeroSection() {
   return (
     <>
       <section class="hero section-pad" aria-labelledby="hero-title">
-        <div class="hero-glow" aria-hidden="true" />
         <div class="hero-grid content-wrap">
           <div class="hero-copy">
             <p class="eyebrow">
@@ -33,15 +32,6 @@ export function HeroSection() {
                 {content.actions.learnMore.label}
                 <Icon name={content.actions.learnMore.icon} />
               </a>
-              <a
-                class="button-secondary hero-support"
-                href={content.actions.support.href}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Icon name={content.actions.support.icon} />
-                {content.actions.support.label}
-              </a>
             </div>
             <div class="hero-proof" aria-label={content.proofAriaLabel}>
               <For each={content.proofItems}>
@@ -55,24 +45,12 @@ export function HeroSection() {
           </div>
 
           <div class="hero-visual" aria-label={content.visualAriaLabel}>
-            <div class="orbit orbit-one" aria-hidden="true" />
-            <div class="orbit orbit-two" aria-hidden="true" />
-            <For each={content.screenshots}>
+            <span class="visual-kicker">A quieter kind of screen time</span>
+            <For each={content.screenshots.filter((shot) => shot.position !== "back")}>
               {(screenshot) => (
                 <PhoneFrame class={phoneClassByPosition[screenshot.position]} image={screenshot.image} />
               )}
             </For>
-            <div class="floating-note note-formats">
-              <span>{content.formatNote.label}</span>
-              <strong>{content.formatNote.value}</strong>
-            </div>
-            <div class="floating-note note-local">
-              <Icon name={content.localNote.icon} />
-              <span>
-                <strong>{content.localNote.title}</strong>
-                {content.localNote.body}
-              </span>
-            </div>
           </div>
         </div>
         <div class="scroll-cue content-wrap" aria-hidden="true">
