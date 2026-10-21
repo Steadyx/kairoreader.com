@@ -37,3 +37,6 @@ jobs:
 
       - name: Check and build
         run: npm run deploy:check
+
+      - name: Check container build
+        run: docker build --tag kairoreader-ci .
