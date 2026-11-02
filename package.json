@@ -26,11 +26,11 @@
     "container:down": "node scripts/kairo.mjs container-stop"
   },
   "dependencies": {
-    "solid-js": "^1.8.22"
+    "solid-js": "^1.9.18"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
-    "postcss": "^8.4.49",
+    "postcss": "^8.5.32",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.7.2",
     "vite": "^8.2.2",
