@@ -30,10 +30,10 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",
-    "postcss": "^8.5.32",
+    "postcss": "^8.5.33",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.7.2",
     "vite": "^8.3.8",
-    "vite-plugin-solid": "^2.11.16"
+    "vite-plugin-solid": "^2.11.17"
   }
 }
