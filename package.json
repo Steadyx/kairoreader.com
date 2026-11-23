@@ -26,7 +26,7 @@
     "container:down": "node scripts/kairo.mjs container-stop"
   },
   "dependencies": {
-    "solid-js": "^1.9.19"
+    "solid-js": "^2.0.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",
